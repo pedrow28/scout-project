@@ -19,7 +19,7 @@ sections = [
 scraper = cloudscraper.create_scraper()
 
 # URL da página
-url = "https://fbref.com/pt/jogadores/d70ce98e/scout/365_m2/Relatorio-de-Observacao-de-Lionel-Messi"
+url = "https://fbref.com/pt/jogadores/33a1f72e/scout/365_m2/Relatorio-de-Observacao-de-Hulk"
 
 response = scraper.get(url)
 
@@ -30,7 +30,7 @@ if response.status_code == 200:
     meta_div = soup.find('div', {'id': 'meta'})
     if meta_div:
         # Nome do jogador
-        nome_jogador = meta_div.find('strong').text.strip()
+        nome_jogador = meta_div.find('h1').text.strip()
 
         # Posição e Pé favorito
         posicao_e_pe = meta_div.find_all('p')[1].text  # Segundo <p> contém "Posição" e "Pé favorito"
