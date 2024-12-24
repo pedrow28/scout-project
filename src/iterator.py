@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 class LeagueScraper:
     # Configurações de limite de requisições
-    RATE_LIMIT = 17  # Máximo de 10 requisições por minuto
+    RATE_LIMIT = 9  # Máximo de 10 requisições por minuto
     TIME_WINDOW = 60  # Intervalo de tempo (em segundos)
 
     def __init__(self, league_url):

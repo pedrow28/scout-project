@@ -9,17 +9,20 @@ from ratelimit import limits, sleep_and_retry
 
 
 class PlayerScoutScraper:
-    RATE_LIMIT = 17  # Máximo de 10 requisições
+    RATE_LIMIT = 9  # Máximo de 15 requisições
     TIME_WINDOW = 60  # Em 60 segundos
 
-    def __init__(self, players_data, log_file = "data/log.txt"):
+    def __init__(self, players_data, db_manager, log_file = "data/log.txt"):
         """
         Inicializa o scraper com o dicionário de jogadores.
 
         Args:
             players_data (dict): Dicionário contendo as informações dos jogadores e suas URLs.
+            db_manager: Gerenciador do banco de dados para salvar os dados dos jogadores.
+            log_file (str): Caminho para o arquivo de log.
         """
         self.players_data = players_data
+        self.db_manager = db_manager
         self.scraper = cloudscraper.create_scraper()
         self.sections = [
             "Estatísticas Padrão",
@@ -31,9 +34,6 @@ class PlayerScoutScraper:
             "Estatísticas Variadas"
         ]
         self.log_file = log_file
-        self.result_df = pd.DataFrame()
-
-                # Limpar o log existente, se houver
         with open(self.log_file, "w") as log:
             log.write("Log do Scraper - Jogadores com Falha\n")
             log.write(f"Iniciado em: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
@@ -105,6 +105,7 @@ class PlayerScoutScraper:
         # Extrair dados gerais (nome, clube, posição, etc.)
         meta_div = soup.find('div', {'id': 'meta'})
         if meta_div:
+            jogador_id = base_url.split("/")[-3]
             nome_jogador = meta_div.find('h1').text.strip()
             posicao_e_pe = meta_div.find_all('p')[1].text
             posicao = posicao_e_pe.split("Posição:")[1].split("•")[0].strip() if "Posição:" in posicao_e_pe else "Desconhecida"
@@ -128,6 +129,17 @@ class PlayerScoutScraper:
                 clube = clube_link.text.strip() if clube_link else "Desconhecido"
             else:
                 clube = "Desconhecido"
+
+                # Salvar jogador no banco
+                self.db_manager.insert_or_update_jogador({
+                    'id': jogador_id,
+                    'nome': nome_jogador,
+                    'time': clube,
+                    'idade': idade,
+                    'posição': posicao,
+                    'pé_preferido': pe_favorito
+                })
+                
         else:
             self.log_failure(player_name, "Meta div não encontrada")
             nome_jogador, posicao, pe_favorito, clube, idade = (
@@ -158,6 +170,18 @@ class PlayerScoutScraper:
             df.insert(4, 'Pé Favorito', pe_favorito)
             df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')
             df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
+
+            # Salvar estatísticas no banco
+            for _, row in df.iterrows():
+                self.db_manager.insert_or_update_estatisticas({
+                    'id_jogador': jogador_id,
+                    'seção': row['Seção'],
+                    'estatística': row['Estatística'],
+                    'por_90': row['Por 90'],
+                    'percentil': row['Percentil'],
+                    'data_extracao': row['Data de Extração']
+                })
+
             return df
         else:
             print(f"Tabela de estatísticas não encontrada para {player_name}.")
