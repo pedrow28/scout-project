@@ -5,111 +5,152 @@ import cloudscraper
 import pandas as pd
 from datetime import datetime
 
-# Seções da tabela, em ordem
-sections = [
-    "Estatísticas Padrão",
-    "Chutes",
-    "Passes",
-    "Gols e Criação de Chutes",
-    "Defesa",
-    "Posse",
-    "Estatísticas Variadas"
-]
 
-scraper = cloudscraper.create_scraper()
+class PlayerScoutScraper:
+    def __init__(self, players_data):
+        """
+        Inicializa o scraper com o dicionário de jogadores.
 
-# URL da página
-url = "https://fbref.com/pt/jogadores/33a1f72e/scout/365_m2/Relatorio-de-Observacao-de-Hulk"
+        Args:
+            players_data (dict): Dicionário contendo as informações dos jogadores e suas URLs.
+        """
+        self.players_data = players_data
+        self.scraper = cloudscraper.create_scraper()
+        self.sections = [
+            "Estatísticas Padrão",
+            "Chutes",
+            "Passes",
+            "Gols e Criação de Chutes",
+            "Defesa",
+            "Posse",
+            "Estatísticas Variadas"
+        ]
+        self.result_df = pd.DataFrame()
 
-response = scraper.get(url)
+    def make_request(self, url):
+        """
+        Faz uma requisição HTTP para a URL especificada.
 
-if response.status_code == 200:
-    soup = BeautifulSoup(response.content, 'html.parser')
+        Args:
+            url (str): A URL a ser acessada.
 
-    # 1. Extrair Nome, Clube, Idade, Posição e Pé Favorito
-    meta_div = soup.find('div', {'id': 'meta'})
-    if meta_div:
-        # Nome do jogador
-        nome_jogador = meta_div.find('h1').text.strip()
+        Returns:
+            response: O objeto de resposta da requisição.
+        """
+        response = self.scraper.get(url)
+        response.raise_for_status()
+        return response
 
-        # Posição e Pé favorito
-        posicao_e_pe = meta_div.find_all('p')[1].text  # Segundo <p> contém "Posição" e "Pé favorito"
-        posicao = posicao_e_pe.split("Posição:")[1].split("•")[0].strip() if "Posição:" in posicao_e_pe else "Desconhecida"
-        pe_favorito = posicao_e_pe.split("Pé favorito:")[1].strip() if "Pé favorito:" in posicao_e_pe else "Desconhecido"
+    def try_url(self, base_url):
+        """
+        Tenta acessar as páginas do jogador nos formatos `m2` e `m1`.
 
-        # Extrair data de nascimento e calcular idade
-        data_nascimento_span = meta_div.find('span', {'id': 'necro-birth'})
-        if data_nascimento_span and 'data-birth' in data_nascimento_span.attrs:
-            data_nascimento_str = data_nascimento_span['data-birth']
-            data_nascimento = datetime.strptime(data_nascimento_str, "%Y-%m-%d").date()
-            hoje = datetime.now().date()
-            idade = hoje.year - data_nascimento.year - ((hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day))
-        else:
-            idade = "Desconhecida"
+        Args:
+            base_url (str): A URL base do jogador.
 
-        # Buscar diretamente pelo <strong> com "Clube:"
-        clube_strong = meta_div.find('strong', string=lambda text: text and "Clube:" in text)
-        if clube_strong:
-            # Encontrar o parágrafo pai (<p>) e o link dentro dele
-            clube_p = clube_strong.find_parent('p')  # Retorna o <p> que contém o <strong>
-            if clube_p:
-                clube_link = clube_p.find('a')  # Busca o <a> dentro do <p>
-                clube = clube_link.text.strip() if clube_link else "Desconhecido (link não encontrado)"
+        Returns:
+            response: O objeto de resposta da requisição.
+        """
+        for suffix in ["m2", "m1"]:
+            url = re.sub(r"m\d", suffix, base_url)
+            try:
+                return self.make_request(url)
+            except requests.HTTPError as e:
+                if e.response.status_code == 404:
+                    continue  # Tentar o próximo formato
+                else:
+                    raise e
+        raise ValueError(f"Ambas as URLs falharam para {base_url}")
+
+    def extract_player_data(self, player_name, player_info):
+        """
+        Extrai os dados do jogador a partir da página do scout.
+
+        Args:
+            player_name (str): Nome do jogador.
+            player_info (dict): Informações do jogador, incluindo a URL base.
+
+        Returns:
+            DataFrame: DataFrame com as estatísticas do jogador.
+        """
+        base_url = player_info['scout_url']
+        response = self.try_url(base_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Extrair dados gerais (nome, clube, posição, etc.)
+        meta_div = soup.find('div', {'id': 'meta'})
+        if meta_div:
+            nome_jogador = meta_div.find('h1').text.strip()
+            posicao_e_pe = meta_div.find_all('p')[1].text
+            posicao = posicao_e_pe.split("Posição:")[1].split("•")[0].strip() if "Posição:" in posicao_e_pe else "Desconhecida"
+            pe_favorito = posicao_e_pe.split("Pé favorito:")[1].strip() if "Pé favorito:" in posicao_e_pe else "Desconhecido"
+
+            # Data de nascimento e idade
+            data_nascimento_span = meta_div.find('span', {'id': 'necro-birth'})
+            if data_nascimento_span and 'data-birth' in data_nascimento_span.attrs:
+                data_nascimento_str = data_nascimento_span['data-birth']
+                data_nascimento = datetime.strptime(data_nascimento_str, "%Y-%m-%d").date()
+                hoje = datetime.now().date()
+                idade = hoje.year - data_nascimento.year - ((hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day))
             else:
-                clube = "Desconhecido (parágrafo não encontrado)"
+                idade = "Desconhecida"
+
+            # Clube
+            clube_strong = meta_div.find('strong', string=lambda text: text and "Clube:" in text)
+            if clube_strong:
+                clube_p = clube_strong.find_parent('p')
+                clube_link = clube_p.find('a') if clube_p else None
+                clube = clube_link.text.strip() if clube_link else "Desconhecido"
+            else:
+                clube = "Desconhecido"
         else:
-            clube = "Desconhecido (strong não encontrado)"
+            nome_jogador, posicao, pe_favorito, clube, idade = (
+                "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecida"
+            )
 
-        
-    else:
-        nome_jogador, posicao, pe_favorito, clube, idade = (
-            "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecida"
-        )
-
-    # 2. Localizar a tabela principal que contém todas as informações
-    table = soup.find('table', {'id': re.compile(r'^scout_full_')})  # Ajuste o ID conforme necessário
-
-    if table:
-        rows = table.find_all('tr')  # Todas as linhas da tabela
+        # Extrair estatísticas da tabela principal
+        table = soup.find('table', {'id': re.compile(r'^scout_full_')})
         data = []
-        current_section = None
+        if table:
+            rows = table.find_all('tr')
+            current_section = None
 
-        for row in rows:
-            # Extrair células da linha
-            cells = [cell.text.strip() for cell in row.find_all(['th', 'td'])]
+            for row in rows:
+                cells = [cell.text.strip() for cell in row.find_all(['th', 'td'])]
+                if len(cells) == 1 and cells[0] in self.sections:
+                    current_section = cells[0]
+                elif len(cells) == 3 and current_section:
+                    data.append([current_section] + cells)
 
-            # Verificar se a linha é uma nova seção
-            if len(cells) == 1 and cells[0] in sections:
-                current_section = cells[0]  # Atualizar a seção atual
-            elif len(cells) == 3 and current_section:  # Linha válida com 3 colunas
-                data.append([current_section] + cells)
+            df = pd.DataFrame(data, columns=['Seção', 'Estatística', 'Por 90', 'Percentil'])
+            df['Por 90'] = pd.to_numeric(df['Por 90'], errors='coerce')
+            df['Percentil'] = pd.to_numeric(df['Percentil'], errors='coerce')
+            df.insert(0, 'Nome do Jogador', nome_jogador)
+            df.insert(1, 'Clube', clube)
+            df.insert(2, 'Idade', idade)
+            df.insert(3, 'Posição', posicao)
+            df.insert(4, 'Pé Favorito', pe_favorito)
+            df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')
+            return df
+        else:
+            print(f"Tabela de estatísticas não encontrada para {player_name}.")
+            return pd.DataFrame()
 
-        # Criar o DataFrame
-        df = pd.DataFrame(data, columns=['Seção', 'Estatística', 'Por 90', 'Percentil'])
+    def run(self):
+        """
+        Executa o scraper para todos os jogadores no dicionário.
 
-        # Filtrar linhas com "Estatística" vazia
-        df = df[df['Estatística'].notna()]  # Remove linhas com valores NaN em "Estatística"
-        df = df[df['Estatística'] != ""]   # Remove linhas com "Estatística" vazia
+        Returns:
+            DataFrame: DataFrame consolidado com as estatísticas de todos os jogadores.
+        """
+        all_data = []
+        for player_name, player_info in self.players_data.items():
+            print(f"Processando: {player_name}")
+            player_df = self.extract_player_data(player_name, player_info)
+            if not player_df.empty:
+                all_data.append(player_df)
+        self.result_df = pd.concat(all_data, ignore_index=True)
+        return self.result_df
 
-        # Ajustar colunas numéricas
-        df['Por 90'] = pd.to_numeric(df['Por 90'], errors='coerce')
-        df['Percentil'] = pd.to_numeric(df['Percentil'], errors='coerce')
 
-        # Adicionar colunas extras
-        df.insert(0, 'Nome do Jogador', nome_jogador)  # Nome do jogador
-        df.insert(1, 'Clube', clube)  # Clube
-        df.insert(2, 'Idade', idade)  # Idade
-        df.insert(3, 'Posição', posicao)  # Posição
-        df.insert(4, 'Pé Favorito', pe_favorito)  # Pé favorito
-        df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')  # Data atual
 
-        # Ajustar a coluna Posição para remover texto após "▪"
-        df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
-
-        # Exibir e salvar os dados
-        print(df.head())
-        df.to_csv('data/tabela_completa.csv', index=False, encoding='utf-8-sig', sep=';')
-    else:
-        print("Tabela principal não encontrada.")
-else:
-    print(f"Erro ao acessar a página: {response.status_code}")

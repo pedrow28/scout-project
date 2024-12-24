@@ -1,159 +1,151 @@
-
-
-
 import time
 from ratelimit import limits, sleep_and_retry
 import cloudscraper
 from bs4 import BeautifulSoup
 
 
+class LeagueScraper:
+    # Configurações de limite de requisições
+    RATE_LIMIT = 20  # Máximo de 20 requisições por minuto
+    TIME_WINDOW = 60  # Intervalo de tempo (em segundos)
 
-# Inicializando o scraper
-scraper = cloudscraper.create_scraper()
+    def __init__(self, league_url):
+        """
+        Inicializa o scraper com a URL da liga.
+        
+        Args:
+            league_url (str): URL da página principal da liga.
+        """
+        self.league_url = league_url
+        self.scraper = cloudscraper.create_scraper()
+        self.teams_links = {}
+        self.players_data = {}
 
-# Definindo o limite de requisições (20 por minuto)
-RATE_LIMIT = 20  # Máximo de 20 requisições
-TIME_WINDOW = 60  # Em um intervalo de 60 segundos
+    @sleep_and_retry
+    @limits(calls=RATE_LIMIT, period=TIME_WINDOW)
+    def make_request(self, url):
+        """
+        Faz uma requisição HTTP para uma URL respeitando o limite de requisições por minuto.
+        
+        Args:
+            url (str): A URL a ser acessada.
 
+        Returns:
+            response: O objeto de resposta da requisição.
+        """
+        response = self.scraper.get(url)
+        response.raise_for_status()
+        return response
 
-@sleep_and_retry
-@limits(calls=RATE_LIMIT, period=TIME_WINDOW)
-def make_request(url):
-    """
-    Faz uma requisição HTTP para uma URL respeitando o limite de requisições por minuto.
-    
-    Args:
-        url (str): A URL a ser acessada.
+    def construct_scout_url_m2(self, player_url):
+        """
+        Constrói a URL da página de scout do jogador com o sufixo m2.
 
-    Returns:
-        response: O objeto de resposta da requisição.
-    """
-    response = scraper.get(url)
-    response.raise_for_status()
-    return response
+        Args:
+            player_url (str): URL da página principal do jogador.
 
+        Returns:
+            str: A URL de scout m2 do jogador.
+        """
+        player_id = player_url.split("/")[-2]
+        player_name = player_url.split("/")[-1]
+        return f"https://fbref.com/pt/jogadores/{player_id}/scout/365_m2/Relatorio-de-Observacao-de-{player_name}"
 
-def construct_scout_url_m2(player_url):
-    """
-    Constrói a URL da página de scout do jogador com o sufixo m2.
+    def extract_teams_links(self):
+        """
+        Extrai os links dos times a partir da página da liga.
 
-    Args:
-        player_url (str): URL da página principal do jogador.
+        Returns:
+            dict: Um dicionário contendo o nome do time como chave e a URL completa como valor.
+        """
+        print(f"Acessando a página da liga: {self.league_url}")
+        response = self.make_request(self.league_url)
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    Returns:
-        str: A URL de scout m2 do jogador.
-    """
-    # Extraindo o ID do jogador e o nome
-    player_id = player_url.split("/")[-2]           # ID único do jogador
-    player_name = player_url.split("/")[-1]         # Nome do jogador
+        # Selecionando a tabela com os times
+        table = soup.find('table', {'id': 'results2024241_overall'})
 
-    # URL de scout com m2
-    scout_url_m2 = f"https://fbref.com/pt/jogadores/{player_id}/scout/365_m2/Relatorio-de-Observacao-de-{player_name}"
-    return scout_url_m2
+        if table:
+            for row in table.find('tbody').find_all('tr'):
+                team_cell = row.find('td', {'class': 'left', 'data-stat': 'team'})
+                if team_cell:
+                    team_name = team_cell.text.strip()
+                    team_link = team_cell.find('a')['href']
+                    self.teams_links[team_name] = f"https://fbref.com{team_link}"
+        else:
+            print("Tabela de times não encontrada!")
 
+        print(f"Times encontrados: {len(self.teams_links)}")
+        return self.teams_links
 
-#### INTERANDO NA LIGA ####
+    def extract_players_data(self, team_name, team_url):
+        """
+        Extrai os dados dos jogadores de um time a partir da página do time.
+        
+        Args:
+            team_name (str): Nome do time.
+            team_url (str): URL da página do time.
 
-# URL da página principal da liga
-url_liga = "https://fbref.com/pt/comps/24/Serie-A-Estatisticas"
+        Returns:
+            list: Uma lista de dicionários contendo informações sobre os jogadores.
+        """
+        print(f"\nAcessando informações do time: {team_name} ({team_url})")
+        response = self.make_request(team_url)
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-# Fazendo a requisição à página principal
-response = make_request(url_liga)
+        # Localizando a tabela de jogadores
+        players_table = soup.find('table', {'id': 'stats_standard_24'})
+        players = []
 
-# Parsing do HTML retornado
-soup = BeautifulSoup(response.text, 'html.parser')
+        if players_table:
+            for row in players_table.find('tbody').find_all('tr'):
+                player_cell = row.find('th', {'data-stat': 'player'})
+                if player_cell and player_cell.find('a'):
+                    player_name = player_cell.find('a').text.strip()
+                    player_url = f"https://fbref.com{player_cell.find('a')['href']}"
+                    scout_url = self.construct_scout_url_m2(player_url)
+                    players.append({
+                        "nome": player_name,
+                        "clube": team_name,
+                        "url": player_url,
+                        "scout_url": scout_url
+                    })
+        else:
+            print(f"Nenhuma tabela de jogadores encontrada para o time {team_name}.")
 
-# Selecionando a tabela com informações dos times
-table = soup.find('table', {'id': 'results2024241_overall'})
+        return players
 
-# Dicionário para armazenar os times e suas URLs
-teams_links = {}
+    def debug_players(self, players, team_name):
+        """
+        Exibe os 3 primeiros e os 3 últimos jogadores de uma lista para fins de debug.
+        
+        Args:
+            players (list): Lista de dicionários contendo informações dos jogadores.
+            team_name (str): Nome do time.
+        """
+        if players:
+            print(f"\nPrimeiros 3 jogadores do time {team_name}:")
+            for player in players[:3]:
+                print(f"Nome: {player['nome']}, Clube: {player['clube']}, URL: {player['url']}, Scout URL: {player['scout_url']}")
 
-if table:
-    # Itera pelas linhas da tabela de times
-    for row in table.find('tbody').find_all('tr'):
-        team_cell = row.find('td', {'class': 'left', 'data-stat': 'team'})
-        if team_cell:
-            # Nome do time
-            team_name = team_cell.text.strip()
-            # URL do time (relativa)
-            team_link = team_cell.find('a')['href']
-            # URL completa do time
-            full_url = f"https://fbref.com{team_link}"
-            # Armazenando no dicionário
-            teams_links[team_name] = full_url
-else:
-    print("Tabela de times não encontrada!")
+            print(f"\nÚltimos 3 jogadores do time {team_name}:")
+            for player in players[-3:]:
+                print(f"Nome: {player['nome']}, Clube: {player['clube']}, URL: {player['url']}, Scout URL: {player['scout_url']}")
+        else:
+            print(f"Nenhum jogador encontrado para o time {team_name}.")
 
-# Exibindo os times obtidos
-print("Times e suas URLs obtidos:")
-print(teams_links)
+    def run(self):
+        """
+        Executa o processo completo de scraping para extrair dados da liga e dos jogadores.
+        
+        Returns:
+            dict: O mega dicionário contendo informações de todos os jogadores.
+        """
+        self.extract_teams_links()
+        for team_name, team_url in self.teams_links.items():
+            team_players = self.extract_players_data(team_name, team_url)
+            self.debug_players(team_players, team_name)
+            for player in team_players:
+                self.players_data[player["nome"]] = player
+        return self.players_data
 
-
-#### INTERANDO NOS TIMES OBTIDOS ####
-
-# Mega dicionário para armazenar informações dos jogadores
-players_data = {}
-
-# Itera sobre cada time e sua respectiva URL
-for team_name, team_url in teams_links.items():
-    print(f"\nAcessando informações do time: {team_name} ({team_url})")
-    
-    # Fazendo a requisição para a página do time
-    response = make_request(team_url)
-    
-    # Parsing do HTML da página do time
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Localizando a tabela com os jogadores
-    players_table = soup.find('table', {'id': 'stats_standard_24'})
-
-    # Lista para armazenar temporariamente os jogadores do time
-    team_players = []
-
-    if players_table:
-        # Itera pelas linhas da tabela de jogadores
-        for row in players_table.find('tbody').find_all('tr'):
-            player_cell = row.find('th', {'data-stat': 'player'})
-            if player_cell and player_cell.find('a'):
-                # Nome do jogador
-                player_name = player_cell.find('a').text.strip()
-                # URL da página do jogador
-                player_url = f"https://fbref.com{player_cell.find('a')['href']}"
-                
-                # Construindo a URL de scout com m2
-                scout_url = construct_scout_url_m2(player_url)
-
-                # Adicionando o jogador ao dicionário principal
-                players_data[player_name] = {
-                    "clube": team_name,
-                    "url": player_url,
-                    "scout_url": scout_url
-                }
-                # Adicionando à lista temporária do time
-                team_players.append({
-                    "nome": player_name,
-                    "clube": team_name,
-                    "url": player_url,
-                    "scout_url": scout_url
-                })
-    else:
-        print(f"Nenhuma tabela de jogadores encontrada para o time {team_name}.")
-        continue
-
-    # Debug: Exibindo os 3 primeiros e 3 últimos jogadores do time com scout URL
-    if team_players:
-        print("\nPrimeiros 3 jogadores do time:")
-        for player in team_players[:3]:
-            print(f"Nome: {player['nome']}, Clube: {player['clube']}, URL: {player['url']}, Scout URL: {player['scout_url']}")
-
-        print("\nÚltimos 3 jogadores do time:")
-        for player in team_players[-3:]:
-            print(f"Nome: {player['nome']}, Clube: {player['clube']}, URL: {player['url']}, Scout URL: {player['scout_url']}")
-    else:
-        print(f"Nenhum jogador encontrado para o time {team_name}.")
-
-# Exibindo o mega dicionário completo (opcional)
-print("\nInformações completas dos jogadores extraídas:")
-for player, data in players_data.items():
-    print(f"Jogador: {player}, Clube: {data['clube']}, URL: {data['url']}, Scout URL: {data['scout_url']}")
