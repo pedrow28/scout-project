@@ -1,3 +1,7 @@
+
+
+
+
 import time
 from ratelimit import limits, sleep_and_retry
 import cloudscraper
@@ -6,7 +10,7 @@ from bs4 import BeautifulSoup
 
 class LeagueScraper:
     # Configurações de limite de requisições
-    RATE_LIMIT = 20  # Máximo de 20 requisições por minuto
+    RATE_LIMIT = 17  # Máximo de 10 requisições por minuto
     TIME_WINDOW = 60  # Intervalo de tempo (em segundos)
 
     def __init__(self, league_url):
@@ -147,5 +151,8 @@ class LeagueScraper:
             self.debug_players(team_players, team_name)
             for player in team_players:
                 self.players_data[player["nome"]] = player
+                # Adicionar um atraso de segurança
+                #time.sleep(5)  # Pausa de 5 segundos entre as requisições
+
         return self.players_data
 

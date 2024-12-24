@@ -1,13 +1,18 @@
 import requests
 import re
+import time
 from bs4 import BeautifulSoup
 import cloudscraper
 import pandas as pd
 from datetime import datetime
+from ratelimit import limits, sleep_and_retry
 
 
 class PlayerScoutScraper:
-    def __init__(self, players_data):
+    RATE_LIMIT = 17  # Máximo de 10 requisições
+    TIME_WINDOW = 60  # Em 60 segundos
+
+    def __init__(self, players_data, log_file = "data/log.txt"):
         """
         Inicializa o scraper com o dicionário de jogadores.
 
@@ -25,7 +30,27 @@ class PlayerScoutScraper:
             "Posse",
             "Estatísticas Variadas"
         ]
+        self.log_file = log_file
         self.result_df = pd.DataFrame()
+
+                # Limpar o log existente, se houver
+        with open(self.log_file, "w") as log:
+            log.write("Log do Scraper - Jogadores com Falha\n")
+            log.write(f"Iniciado em: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+    def log_failure(self, player_name, error_message):
+        """
+        Registra uma falha no arquivo de log.
+
+        Args:
+            player_name (str): Nome do jogador que falhou.
+            error_message (str): Mensagem de erro associada à falha.
+        """
+        with open(self.log_file, "a") as log:
+            log.write(f"Jogador: {player_name} - Erro: {error_message}\n")
+
+    @sleep_and_retry
+    @limits(calls=RATE_LIMIT, period=TIME_WINDOW)
 
     def make_request(self, url):
         """
@@ -104,6 +129,7 @@ class PlayerScoutScraper:
             else:
                 clube = "Desconhecido"
         else:
+            self.log_failure(player_name, "Meta div não encontrada")
             nome_jogador, posicao, pe_favorito, clube, idade = (
                 "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecida"
             )
@@ -131,9 +157,11 @@ class PlayerScoutScraper:
             df.insert(3, 'Posição', posicao)
             df.insert(4, 'Pé Favorito', pe_favorito)
             df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')
+            df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
             return df
         else:
             print(f"Tabela de estatísticas não encontrada para {player_name}.")
+            self.log_failure(f"Tabela de estatísticas não encontrada para {player_name}.")
             return pd.DataFrame()
 
     def run(self):
@@ -149,6 +177,9 @@ class PlayerScoutScraper:
             player_df = self.extract_player_data(player_name, player_info)
             if not player_df.empty:
                 all_data.append(player_df)
+
+        # Adicionar um atraso de segurança
+        #time.sleep(5)  # Pausa de 5 segundos entre as requisições
         self.result_df = pd.concat(all_data, ignore_index=True)
         return self.result_df
 
