@@ -6,12 +6,16 @@ import time
 from ratelimit import limits, sleep_and_retry
 import cloudscraper
 from bs4 import BeautifulSoup
+import random
+import requests
+
 
 
 class LeagueScraper:
     # Configurações de limite de requisições
     RATE_LIMIT = 9  # Máximo de 10 requisições por minuto
     TIME_WINDOW = 60  # Intervalo de tempo (em segundos)
+
 
     def __init__(self, league_url):
         """
@@ -22,24 +26,67 @@ class LeagueScraper:
         """
         self.league_url = league_url
         self.scraper = cloudscraper.create_scraper()
+        self.scraper.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Connection': 'keep-alive',
+    })
         self.teams_links = {}
         self.players_data = {}
 
+
+    def _create_scraper(self):
+        """
+        Cria um objeto cloudscraper com as configurações de header padronizadas
+        para evitar bloqueios.
+        """
+        
+        scraper = cloudscraper.create_scraper(
+            browser={
+                'browser': 'chrome',
+                'platform': 'windows',
+                'desktop': True
+            }
+        )
+        scraper.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        })
+        return scraper
+    
+
     @sleep_and_retry
     @limits(calls=RATE_LIMIT, period=TIME_WINDOW)
-    def make_request(self, url):
+    def make_request(self, url, max_retries=3):
         """
-        Faz uma requisição HTTP para uma URL respeitando o limite de requisições por minuto.
-        
+        Faz uma requisição HTTP para a URL especificada, com um rate limit.
+
         Args:
             url (str): A URL a ser acessada.
+            max_retries (int): Número máximo de tentativas de requisição antes de
+                aceitar a falha. O padrão é 3.
 
         Returns:
             response: O objeto de resposta da requisição.
         """
-        response = self.scraper.get(url)
-        response.raise_for_status()
-        return response
+        retries = 0
+        while retries < max_retries:
+            try:
+                time.sleep(random.uniform(3, 7))
+                response = self.scraper.get(url)
+                response.raise_for_status()
+                return response
+            except requests.exceptions.RequestException as e:
+                retries += 1
+                wait_time = 2 ** retries + random.uniform(0, 1)
+                time.sleep(wait_time)
+                if retries == max_retries:
+                    raise e
 
     def construct_scout_url_m2(self, player_url):
         """
@@ -147,6 +194,7 @@ class LeagueScraper:
         """
         self.extract_teams_links()
         for team_name, team_url in self.teams_links.items():
+            time.sleep(5)  # Pausa de 10 segundos entre acessos a times
             team_players = self.extract_players_data(team_name, team_url)
             self.debug_players(team_players, team_name)
             for player in team_players:

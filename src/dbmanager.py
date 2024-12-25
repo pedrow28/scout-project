@@ -20,7 +20,7 @@ class DatabaseManager:
         # Tabela de Jogadores
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS jogadores (
-                id TEXT PRIMARY KEY,
+                jogador_id TEXT PRIMARY KEY,
                 nome TEXT,
                 time TEXT,
                 idade INTEGER,
@@ -37,32 +37,40 @@ class DatabaseManager:
                 por_90 REAL,
                 percentil REAL,
                 PRIMARY KEY (jogador_id, estatistica),
-                FOREIGN KEY (jogador_id) REFERENCES jogadores(id) ON DELETE CASCADE ON UPDATE NO ACTION
+                FOREIGN KEY (jogador_id) REFERENCES jogadores(jogador_id) ON DELETE CASCADE ON UPDATE NO ACTION
             )
         """)
 
         self.connection.commit()
 
-    def insert_or_update_jogador(self, jogador):
+    def insert_or_update_jogador(self, jogadores):
         """
         Insere ou atualiza as informações de um jogador no banco.
 
         Args:
             jogador (dict): Dados do jogador, incluindo id, nome, time, idade, posição e pé_preferido.
         """
-        self.cursor.execute("""
-            INSERT INTO jogadores (id, nome, time, idade, posição, pé_preferido)
-            VALUES (:id, :nome, :time, :idade, :posição, :pé_preferido)
-            ON CONFLICT(id) DO UPDATE SET
-                nome = excluded.nome,
-                time = excluded.time,
-                idade = excluded.idade,
-                posição = excluded.posição,
-                pé_preferido = excluded.pé_preferido
-        """, jogador)
-        self.connection.commit()
+        for jogador in jogadores:
+            self.cursor.execute("""
+                INSERT INTO jogadores (jogador_id, nome, time, idade, posição, pé_preferido)
+                VALUES (:jogador_id, :nome, :time, :idade, :posição, :pé_preferido)
+                ON CONFLICT(jogador_id) DO UPDATE SET
+                    nome = excluded.nome,
+                    time = excluded.time,
+                    idade = excluded.idade,
+                    posição = excluded.posição,
+                    pé_preferido = excluded.pé_preferido
+            """, {
+                        'jogador_id': jogador['jogador_id'],
+                        'nome': jogador['nome_jogador'],
+                        'time': jogador['clube'],
+                        'idade': jogador['idade'],
+                        'posição': jogador['posicao'],
+                        'pé_preferido': jogador['pe_favorito']
+                })
+            self.connection.commit()
 
-    def insert_or_update_estatisticas(self, jogador_id, estatisticas):
+    def insert_or_update_estatisticas(self, estatisticas):
         """
         Insere ou atualiza as estatísticas de um jogador no banco.
 
@@ -78,10 +86,10 @@ class DatabaseManager:
                     por_90 = excluded.por_90,
                     percentil = excluded.percentil
             """, {
-                'jogador_id': jogador_id,
+                'jogador_id': estatistica['jogador_id'],
                 'estatistica': estatistica['estatistica'],
-                'por_90': estatistica.get('por_90'),
-                'percentil': estatistica.get('percentil')
+                'por_90': estatistica['por_90'],
+                'percentil': estatistica['percentil']
             })
         self.connection.commit()
 

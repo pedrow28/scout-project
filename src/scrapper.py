@@ -24,6 +24,12 @@ class PlayerScoutScraper:
         self.players_data = players_data
         self.db_manager = db_manager
         self.scraper = cloudscraper.create_scraper()
+        self.scraper.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Connection': 'keep-alive',
+    })
         self.sections = [
             "Estatísticas Padrão",
             "Chutes",
@@ -62,6 +68,7 @@ class PlayerScoutScraper:
         Returns:
             response: O objeto de resposta da requisição.
         """
+        time.sleep(1)
         response = self.scraper.get(url)
         response.raise_for_status()
         return response
@@ -105,7 +112,7 @@ class PlayerScoutScraper:
         # Extrair dados gerais (nome, clube, posição, etc.)
         meta_div = soup.find('div', {'id': 'meta'})
         if meta_div:
-            jogador_id = base_url.split("/")[-3]
+            jogador_id = base_url.split("/")[-4]
             nome_jogador = meta_div.find('h1').text.strip()
             posicao_e_pe = meta_div.find_all('p')[1].text
             posicao = posicao_e_pe.split("Posição:")[1].split("•")[0].strip() if "Posição:" in posicao_e_pe else "Desconhecida"
@@ -130,21 +137,27 @@ class PlayerScoutScraper:
             else:
                 clube = "Desconhecido"
 
-                # Salvar jogador no banco
-                self.db_manager.insert_or_update_jogador({
-                    'id': jogador_id,
-                    'nome': nome_jogador,
-                    'time': clube,
-                    'idade': idade,
-                    'posição': posicao,
-                    'pé_preferido': pe_favorito
-                })
-                
+            # Construir a lista de jogadores
+            jogadores = []
+            jogadores.append({
+                "jogador_id": jogador_id,
+                "nome_jogador": nome_jogador,
+                "clube": clube,
+                "idade": idade,
+                "posicao": posicao,
+                "pe_favorito": pe_favorito
+            })
+    
+            # Passar a lista de jogadores ao gerenciador
+            self.db_manager.insert_or_update_jogador(jogadores)
+    
         else:
             self.log_failure(player_name, "Meta div não encontrada")
             nome_jogador, posicao, pe_favorito, clube, idade = (
                 "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecida"
             )
+
+
 
         # Extrair estatísticas da tabela principal
         table = soup.find('table', {'id': re.compile(r'^scout_full_')})
@@ -163,47 +176,52 @@ class PlayerScoutScraper:
             df = pd.DataFrame(data, columns=['Seção', 'Estatística', 'Por 90', 'Percentil'])
             df['Por 90'] = pd.to_numeric(df['Por 90'], errors='coerce')
             df['Percentil'] = pd.to_numeric(df['Percentil'], errors='coerce')
-            df.insert(0, 'Nome do Jogador', nome_jogador)
-            df.insert(1, 'Clube', clube)
-            df.insert(2, 'Idade', idade)
-            df.insert(3, 'Posição', posicao)
-            df.insert(4, 'Pé Favorito', pe_favorito)
+            df.insert(0, 'ID do Jogador', jogador_id)
+            df.insert(1, 'Nome do Jogador', nome_jogador)
+            df.insert(2, 'Clube', clube)
+            df.insert(3, 'Idade', idade)
+            df.insert(4, 'Posição', posicao)
+            df.insert(5, 'Pé Favorito', pe_favorito)
             df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')
             df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
 
-            # Salvar estatísticas no banco
+            # Construir a lista de estatísticas
+            estatisticas = []
             for _, row in df.iterrows():
-                self.db_manager.insert_or_update_estatisticas({
-                    'id_jogador': jogador_id,
-                    'seção': row['Seção'],
-                    'estatística': row['Estatística'],
+                estatisticas.append({
+                    'jogador_id': row['ID do Jogador'],
+                    'estatistica': row['Estatística'],
                     'por_90': row['Por 90'],
-                    'percentil': row['Percentil'],
-                    'data_extracao': row['Data de Extração']
+                    'percentil': row['Percentil']
                 })
+
+            # Passar a lista de estatísticas ao gerenciador
+            self.db_manager.insert_or_update_estatisticas(estatisticas)
+
+                
+
+
 
             return df
         else:
             print(f"Tabela de estatísticas não encontrada para {player_name}.")
-            self.log_failure(f"Tabela de estatísticas não encontrada para {player_name}.")
+            self.log_failure(player_name, f"Tabela de estatísticas não encontrada para {player_name}.")
             return pd.DataFrame()
 
     def run(self):
-        """
-        Executa o scraper para todos os jogadores no dicionário.
-
-        Returns:
-            DataFrame: DataFrame consolidado com as estatísticas de todos os jogadores.
-        """
         all_data = []
         for player_name, player_info in self.players_data.items():
             print(f"Processando: {player_name}")
-            player_df = self.extract_player_data(player_name, player_info)
-            if not player_df.empty:
-                all_data.append(player_df)
+            try:
+                #time.sleep(10)  # Pausa entre acessos aos jogadores
+                player_df = self.extract_player_data(player_name, player_info)
+                #print(player_df['Nome do Jogador', 'ID do Jogador'])
+                if not player_df.empty:
+                    all_data.append(player_df)
+            except Exception as e:
+                print(f"Erro ao processar {player_name}: {e}")
+                self.log_failure(player_name, str(e))
 
-        # Adicionar um atraso de segurança
-        #time.sleep(5)  # Pausa de 5 segundos entre as requisições
         self.result_df = pd.concat(all_data, ignore_index=True)
         return self.result_df
 
