@@ -1,0 +1,79 @@
+requirement_analysis:
+  description: >
+    Analyze the following user input: {topic}.
+    Access the statistics document and identify the most relevant metrics
+    for this analysis. Return a JSON with the selected statistics and 
+    their justifications.
+  expected_output: >
+    A JSON object containing :It should include a requirements field, which is an object containing
+    three elements: position, a string that specifies the required player position; tactical_function,
+    a string that defines the tactical role the player is expected to perform; and key_characteristics,
+    a list of strings that outlines the essential characteristics for the player. Additionally, the JSON
+    should have a primary_statistics field, which is an array of objects.
+    Each object in this array must have four elements: name, a string indicating
+    the name of the statistic; importance, a string that can take the values "high,"
+    "medium," or "low," describing how critical the statistic is; justification, a
+    string providing an explanation of why the statistic is important; and minimum_percentile,
+    an integer representing the minimum percentile required for the statistic. Lastly, the JSON
+    should include a secondary_statistics field, structured similarly to primary_statistics, as an array of
+    objects with the same set of fields: name, importance, justification, and minimum_percentile.
+  agent: interpreter_agent
+
+data_analysis:
+  description: >
+    Based on the selected statistics, perform a database
+    analysis to find the 20 most suitable players. Your analysis should
+    consider both primary and secondary statistics, weighing them according
+    to their importance. Ensure thorough statistical comparison and ranking
+  expected_output: >
+    A JSON object containing:It should include an analyzed_players field, 
+    which is an integer representing the total number of players analyzed. 
+    The JSON should also have a selected_players field, which is an array of 
+    objects. Each object in this array must include several elements: player_id,
+    a string identifying the player; name, a string containing the player's name; current_team, 
+    a string specifying the player's current team; age, an integer indicating the player's age; match_score,
+    a float ranging from 0 to 10 that represents the player's score in terms of matching the requirements;
+    and key_statistics, an object where each statistic name is a key, and the value is another object containing value, 
+    a float representing the statistic value; percentile, an integer indicating the player's percentile for that statistic;
+    and comparison_to_requirements, a string describing how the statistic compares to the requirements. Additionally, each
+    player object must have a selection_justification field, which is a string explaining why the player was selected.
+    Finally, the JSON should include an analysis_methodology field, which is a string providing an explanation of the selection process used. 
+    The agent should ensure all fields are correctly typed and the output fully adheres to this structure.
+  agent: analyst_agent
+
+report_generation:
+  description: >
+    Create a detailed report based on the selected players.
+    The report should include individual analysis of each player and
+    justifications for their selection. Include comparative analysis
+    between players and clear recommendations
+  expected_output: >
+    A structured report containing:
+            1. Executive Summary
+            2. Analysis Methodology
+            3. Player Profiles (for each player):
+               - Statistical Analysis
+               - Tactical Fit Assessment
+               - Strengths and Areas for Development
+            4. Comparative Analysis
+            5. Recommendations
+            6. Technical Appendix with detailed statistics
+  agent: report_agent
+
+markdown_generation:
+  description: >
+    Format the technical report in markdown, creating a clear,
+    professional, and well-organized structure. Include proper headers,
+    tables, and formatting for optimal readability. Ensure all technical
+    content is properly formatted and easily navigable
+  expected_output: >
+    A markdown file containing:
+            1. Title and Table of Contents
+            2. All sections from the technical report properly formatted with:
+               - Consistent header hierarchy
+               - Well-formatted tables for statistics
+               - Proper emphasis and highlighting
+               - Clear section breaks
+               - Formatted lists and bullet points
+            3. Save the file as a .md file
+  agent: markdown_agent

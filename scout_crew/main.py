@@ -2,7 +2,7 @@
 import sys
 import warnings
 
-from scout_crew.crew import ScoutCrew
+from src.crew import ScoutCrew
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -15,8 +15,9 @@ def run():
     """
     Run the crew.
     """
+
     inputs = {
-        'topic': 'AI LLMs'
+        'topic': 'I need a right-back who is defensive-minded but can also support play creation through the middle of the field'
     }
     ScoutCrew().crew().kickoff(inputs=inputs)
 

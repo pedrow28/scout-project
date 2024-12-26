@@ -1,9 +1,31 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from crewai_tools import NL2SQLTool
+from langchain_openai import ChatOpenAI
+from crewai_tools import FileReadTool
+from crewai_tools import FileWriterTool
+from dotenv import load_dotenv
+from src.tool_wraper import CrewAIToolWrapper
+import os
 
 # If you want to run a snippet of code before or after the crew starts, 
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
+load_dotenv()
+api_key = os.environ["OPENAI_API_KEY"]
+
+# Tools
+## SQL
+
+nl2sql = NL2SQLTool(db_uri="sqlite://example@localhost:5432/data/jogadores.db")
+
+
+## Read files
+file_read_tool = FileReadTool(file_path='data/stats.md')
+
+## Write files
+file_write_tool = FileWriterTool(file_path='output/report.md')
 
 @CrewBase
 class ScoutCrew():
@@ -21,6 +43,7 @@ class ScoutCrew():
 	def interpreter_agent(self) -> Agent:
 		return Agent(
 			config=self.agents_config['interpreter_agent'],
+			tools=[file_read_tool],
 			verbose=True
 		)
 
@@ -28,6 +51,7 @@ class ScoutCrew():
 	def analyst_agent(self) -> Agent:
 		return Agent(
 			config=self.agents_config['analyst_agent'],
+			tools=nl2sql,
 			verbose=True
 		)
 	

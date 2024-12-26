@@ -8,6 +8,7 @@ import cloudscraper
 from bs4 import BeautifulSoup
 import random
 import requests
+import re
 
 
 
@@ -114,7 +115,7 @@ class LeagueScraper:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Selecionando a tabela com os times
-        table = soup.find('table', {'id': 'results2024241_overall'})
+        table = soup.find('table', {'id': re.compile(r'^results2024')})
 
         if table:
             for row in table.find('tbody').find_all('tr'):
@@ -145,7 +146,7 @@ class LeagueScraper:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Localizando a tabela de jogadores
-        players_table = soup.find('table', {'id': 'stats_standard_24'})
+        players_table = soup.find('table', {'id': re.compile(r'^stats_standard_')})
         players = []
 
         if players_table:

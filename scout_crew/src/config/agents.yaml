@@ -1,6 +1,6 @@
 interpreter_agent:
   role: >
-    Soccer Scouting Requirements Analyst based on {input}
+    Soccer Scouting Requirements Analyst based on {topic}
   goal: >
     Interpret user requirements and select relevant statistics for a scout analysis
   backstory: >
