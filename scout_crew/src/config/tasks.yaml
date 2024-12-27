@@ -6,7 +6,10 @@ requirement_analysis:
     DON'T create new statistics, use only the ones that are available in the database.
     Validate the input data for consistency. Return a structured JSON with selected statistics,
     justifications, and clear categorizations (primary and secondary).
-    Keep in mind that qe are looking for good players, so keep the requirements high (above 80 percentile, at last).
+    Be sure to use the positions abreviations as they are in the database, for example, 
+    "CB" for center-back and "FB" for full-back. The complete list of positions and their abbreviations
+    is available in the statistics document.
+    
 
   expected_output: >
     A JSON object containing the following fields:
@@ -25,14 +28,21 @@ requirement_analysis:
 
 data_analysis:
   description: >
-    Perform a database analysis to identify the 20 most suitable players based on the selected statistics.
-    Weigh primary and secondary statistics dynamically according to their importance. Ensure robust
-    statistical comparisons and properly handle missing data to maintain accuracy in ranking.
-    You must keep the limit of 20 players and provide a clear explanation of the selection process,
-    if you fond a lot of players, you must prioritize the ones with the highest match score.
-    keeping the limit of 20 players.
-    you must do this to ensure that a report can be generated with the necessary information.
-    Don't create players, use only the ones that are available in the database.
+    Perform a database analysis to identify the 30 most suitable players based on the selected statistics.
+    Use the percentiles as absolute evaluation metrics to compare players, rather than performing calculations with them.
+    Evaluate players by checking if their percentiles meet or exceed the required thresholds for the selected statistics.
+    The positions in the table are stored in the following format:
+
+    DF (CB)
+
+    Therefore, if you need to search for "CB" or any other position, you should not look for an exact match but instead
+    search for values that contain the substring "CB" within them. Use a query that employs partial matching 
+    (e.g., LIKE operator) to ensure the desired results are returned.
+    You must keep the limit of 30 players and provide a clear explanation of the selection process.
+    If you find more than 30 players meeting the criteria, prioritize those with the highest percentiles
+    across key statistics without performing complex calculations.
+    If your search doesn't find any players, you can gradually decrease the percentile value until you find some.
+    Try to select many players as possible, but always keep the limit of 30 players.
   expected_output: >
     A JSON object containing:
     - `analyzed_players` (integer): Total number of players analyzed.
@@ -41,11 +51,10 @@ data_analysis:
       - `name` (string): Player's name.
       - `current_team` (string): Current team.
       - `age` (integer): Player's age.
-      - `match_score` (float, 0-10): Score based on requirements.
       - `key_statistics` (object): Each statistic name maps to:
-        - `value` (float): Statistic value.
-        - `percentile` (integer): Percentile ranking.
-        - `comparison_to_requirements` (string): Comparison explanation.
+        - `value` (float): Statistic value (absolute).
+        - `percentile` (integer): Percentile ranking (used as an evaluation threshold).
+        - `meets_threshold` (boolean): Whether the percentile meets the requirement.
       - `selection_justification` (string): Reason for selection.
     - `analysis_methodology` (string): Explanation of the selection process.
   agent: analyst_agent
