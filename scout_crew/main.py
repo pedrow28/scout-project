@@ -16,8 +16,10 @@ def run():
     Run the crew.
     """
 
+    user_input = input("Insira a pesquisa a ser feita: ")
+
     inputs = {
-        'topic': 'I need a right-back who is defensive-minded but can also support play creation through the middle of the field'
+        'topic': user_input
     }
     ScoutCrew().crew().kickoff(inputs=inputs)
 

@@ -1,11 +1,12 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from crewai_tools import NL2SQLTool
+#from langchain_community.utilities.sql_database import SQLDatabase
+#from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
+from src.tools.sql_tools import SQLQueryTool, SQLQueryCheckerTool, SQLListTablesTool, SQLInfoTool
 from langchain_openai import ChatOpenAI
 from crewai_tools import FileReadTool
 from crewai_tools import FileWriterTool
 from dotenv import load_dotenv
-from src.tool_wraper import CrewAIToolWrapper
 import os
 
 # If you want to run a snippet of code before or after the crew starts, 
@@ -15,10 +16,16 @@ import os
 load_dotenv()
 api_key = os.environ["OPENAI_API_KEY"]
 
+
 # Tools
 ## SQL
 
-nl2sql = NL2SQLTool(db_uri="sqlite://example@localhost:5432/data/jogadores.db")
+sql_tools = [
+	SQLQueryTool(),
+	SQLQueryCheckerTool(),
+	SQLListTablesTool(),
+	SQLInfoTool()
+	]
 
 
 ## Read files
@@ -51,7 +58,7 @@ class ScoutCrew():
 	def analyst_agent(self) -> Agent:
 		return Agent(
 			config=self.agents_config['analyst_agent'],
-			tools=nl2sql,
+			tools=sql_tools,
 			verbose=True
 		)
 	

@@ -1,44 +1,42 @@
 requirement_analysis:
   description: >
-    Analyze the following user input: {topic}.
-    Access the statistics document and identify the most relevant metrics
-    for this analysis. Return a JSON with the selected statistics and 
-    their justifications.
+    Analyze the provided user input: {topic}.
+    Use the statistics document to identify the most relevant metrics for the analysis.
+    Validate the input data for consistency. Return a structured JSON with selected statistics,
+    justifications, and clear categorizations (primary and secondary).
   expected_output: >
-    A JSON object containing :It should include a requirements field, which is an object containing
-    three elements: position, a string that specifies the required player position; tactical_function,
-    a string that defines the tactical role the player is expected to perform; and key_characteristics,
-    a list of strings that outlines the essential characteristics for the player. Additionally, the JSON
-    should have a primary_statistics field, which is an array of objects.
-    Each object in this array must have four elements: name, a string indicating
-    the name of the statistic; importance, a string that can take the values "high,"
-    "medium," or "low," describing how critical the statistic is; justification, a
-    string providing an explanation of why the statistic is important; and minimum_percentile,
-    an integer representing the minimum percentile required for the statistic. Lastly, the JSON
-    should include a secondary_statistics field, structured similarly to primary_statistics, as an array of
-    objects with the same set of fields: name, importance, justification, and minimum_percentile.
+    A JSON object containing the following fields:
+    - `requirements`: An object with:
+      - `position` (string): Required player position.
+      - `tactical_function` (string): Tactical role expected for the player.
+      - `key_characteristics` (list of strings): Essential characteristics.
+    - `primary_statistics` and `secondary_statistics`: Arrays of objects, each with:
+      - `name` (string): Name of the statistic.
+      - `importance` (string): Criticality level ("high," "medium," or "low").
+      - `justification` (string): Reason for its importance.
+      - `minimum_percentile` (integer): Required minimum percentile.
   agent: interpreter_agent
 
 data_analysis:
   description: >
-    Based on the selected statistics, perform a database
-    analysis to find the 20 most suitable players. Your analysis should
-    consider both primary and secondary statistics, weighing them according
-    to their importance. Ensure thorough statistical comparison and ranking
+    Perform a database analysis to identify the 20 most suitable players based on the selected statistics.
+    Weigh primary and secondary statistics dynamically according to their importance. Ensure robust
+    statistical comparisons and properly handle missing data to maintain accuracy in ranking.
   expected_output: >
-    A JSON object containing:It should include an analyzed_players field, 
-    which is an integer representing the total number of players analyzed. 
-    The JSON should also have a selected_players field, which is an array of 
-    objects. Each object in this array must include several elements: player_id,
-    a string identifying the player; name, a string containing the player's name; current_team, 
-    a string specifying the player's current team; age, an integer indicating the player's age; match_score,
-    a float ranging from 0 to 10 that represents the player's score in terms of matching the requirements;
-    and key_statistics, an object where each statistic name is a key, and the value is another object containing value, 
-    a float representing the statistic value; percentile, an integer indicating the player's percentile for that statistic;
-    and comparison_to_requirements, a string describing how the statistic compares to the requirements. Additionally, each
-    player object must have a selection_justification field, which is a string explaining why the player was selected.
-    Finally, the JSON should include an analysis_methodology field, which is a string providing an explanation of the selection process used. 
-    The agent should ensure all fields are correctly typed and the output fully adheres to this structure.
+    A JSON object containing:
+    - `analyzed_players` (integer): Total number of players analyzed.
+    - `selected_players` (array of objects): Each object includes:
+      - `player_id` (string): Identifier.
+      - `name` (string): Player's name.
+      - `current_team` (string): Current team.
+      - `age` (integer): Player's age.
+      - `match_score` (float, 0-10): Score based on requirements.
+      - `key_statistics` (object): Each statistic name maps to:
+        - `value` (float): Statistic value.
+        - `percentile` (integer): Percentile ranking.
+        - `comparison_to_requirements` (string): Comparison explanation.
+      - `selection_justification` (string): Reason for selection.
+    - `analysis_methodology` (string): Explanation of the selection process.
   agent: analyst_agent
 
 report_generation:
@@ -52,6 +50,7 @@ report_generation:
             1. Executive Summary
             2. Analysis Methodology
             3. Player Profiles (for each player):
+               - Player Name, Age, and Current Team
                - Statistical Analysis
                - Tactical Fit Assessment
                - Strengths and Areas for Development

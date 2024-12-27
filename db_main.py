@@ -13,10 +13,11 @@ import time
 from ratelimit import limits, sleep_and_retry
 
 
-    #{"liga": "Serie A", "url": "https://fbref.com/pt/comps/24/Serie-A-Estatisticas"}
+
 
 
 ligas = [
+    {"liga": "Serie A", "url": "https://fbref.com/pt/comps/24/Serie-A-Estatisticas"}
     {"liga": "Liga Profesional de Fútbol Argentina", "url": "https://fbref.com/pt/comps/21/Liga-Profesional-Argentina-Estatisticas"},
     {"liga": "Chilean Primera División", "url": "https://fbref.com/pt/comps/35/Primera-Division-Estatisticas"},
     {"liga": "Categoría Primera A", "url": "https://fbref.com/pt/comps/41/Primera-A-Estatisticas"},
