@@ -1,16 +1,22 @@
 requirement_analysis:
   description: >
-    Analyze the provided user input: {topic}.
+    Analyze the provided user input: {topic}. If the input is not in English, translate it.
     Use the statistics document to identify the most relevant metrics for the analysis.
+    You must ensure that you are using only statistics that are in the database available for all players,
+    DON'T create new statistics, use only the ones that are available in the database.
     Validate the input data for consistency. Return a structured JSON with selected statistics,
     justifications, and clear categorizations (primary and secondary).
+    Keep in mind that qe are looking for good players, so keep the requirements high (above 80 percentile, at last).
+
   expected_output: >
     A JSON object containing the following fields:
     - `requirements`: An object with:
       - `position` (string): Required player position.
       - `tactical_function` (string): Tactical role expected for the player.
       - `key_characteristics` (list of strings): Essential characteristics.
-    - `primary_statistics` and `secondary_statistics`: Arrays of objects, each with:
+    - `primary_statistics` and `secondary_statistics`: Arrays of objects,
+      each representing a statistic that are available in the database, based on the document provided,
+      each with:
       - `name` (string): Name of the statistic.
       - `importance` (string): Criticality level ("high," "medium," or "low").
       - `justification` (string): Reason for its importance.
@@ -22,6 +28,11 @@ data_analysis:
     Perform a database analysis to identify the 20 most suitable players based on the selected statistics.
     Weigh primary and secondary statistics dynamically according to their importance. Ensure robust
     statistical comparisons and properly handle missing data to maintain accuracy in ranking.
+    You must keep the limit of 20 players and provide a clear explanation of the selection process,
+    if you fond a lot of players, you must prioritize the ones with the highest match score.
+    keeping the limit of 20 players.
+    you must do this to ensure that a report can be generated with the necessary information.
+    Don't create players, use only the ones that are available in the database.
   expected_output: >
     A JSON object containing:
     - `analyzed_players` (integer): Total number of players analyzed.
@@ -44,7 +55,8 @@ report_generation:
     Create a detailed report based on the selected players.
     The report should include individual analysis of each player and
     justifications for their selection. Include comparative analysis
-    between players and clear recommendations
+    between players and clear recommendations.
+    Don't create players, use only the ones that are available in the database.
   expected_output: >
     A structured report containing:
             1. Executive Summary
@@ -64,9 +76,10 @@ markdown_generation:
     Format the technical report in markdown, creating a clear,
     professional, and well-organized structure. Include proper headers,
     tables, and formatting for optimal readability. Ensure all technical
-    content is properly formatted and easily navigable
+    content is properly formatted and easily navigable. You must translate
+    the report to Brazilian Portuguese.
   expected_output: >
-    A markdown file containing:
+    A markdown file, translated to Portuguese, containing:
             1. Title and Table of Contents
             2. All sections from the technical report properly formatted with:
                - Consistent header hierarchy

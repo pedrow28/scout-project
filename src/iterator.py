@@ -1,7 +1,3 @@
-
-
-
-
 import time
 from ratelimit import limits, sleep_and_retry
 import cloudscraper
@@ -101,7 +97,7 @@ class LeagueScraper:
         """
         player_id = player_url.split("/")[-2]
         player_name = player_url.split("/")[-1]
-        return f"https://fbref.com/pt/jogadores/{player_id}/scout/365_m2/Relatorio-de-Observacao-de-{player_name}"
+        return f"https://fbref.com/en/players/{player_id}/scout/365_m2/{player_name}-Scouting-Report"
 
     def extract_teams_links(self):
         """
@@ -195,7 +191,7 @@ class LeagueScraper:
         """
         self.extract_teams_links()
         for team_name, team_url in self.teams_links.items():
-            time.sleep(5)  # Pausa de 10 segundos entre acessos a times
+            #time.sleep(5)  # Pausa de 5 segundos entre acessos a times
             team_players = self.extract_players_data(team_name, team_url)
             self.debug_players(team_players, team_name)
             for player in team_players:

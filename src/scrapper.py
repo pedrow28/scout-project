@@ -31,13 +31,14 @@ class PlayerScoutScraper:
         'Connection': 'keep-alive',
     })
         self.sections = [
-            "Estatísticas Padrão",
-            "Chutes",
-            "Passes",
-            "Gols e Criação de Chutes",
-            "Defesa",
-            "Posse",
-            "Estatísticas Variadas"
+            "Standard Stats",
+            "Shooting",
+            "Passing",
+            "Pass Types",
+            "Goal and Shot Creation",
+            "Defense",
+            "Possession",
+            "Miscellaneous Stats"
         ]
         self.log_file = log_file
         with open(self.log_file, "w") as log:
@@ -112,49 +113,60 @@ class PlayerScoutScraper:
         # Extrair dados gerais (nome, clube, posição, etc.)
         meta_div = soup.find('div', {'id': 'meta'})
         if meta_div:
-            jogador_id = base_url.split("/")[-4]
-            nome_jogador = meta_div.find('h1').text.strip()
-            posicao_e_pe = meta_div.find_all('p')[1].text
-            posicao = posicao_e_pe.split("Posição:")[1].split("•")[0].strip() if "Posição:" in posicao_e_pe else "Desconhecida"
-            pe_favorito = posicao_e_pe.split("Pé favorito:")[1].strip() if "Pé favorito:" in posicao_e_pe else "Desconhecido"
+            player_id = base_url.split("/")[-4]
+            # Nome do jogador
+    # Nome do jogador
+            name = meta_div.find('h1').text.strip()
+
+            # Posição e pé dominante
+            position_tag_corrected = meta_div.find('strong', string=lambda x: x and 'Position:' in x)
+            if position_tag_corrected:
+                position_full_text_corrected = position_tag_corrected.parent.get_text(" ", strip=True)
+                position = position_full_text_corrected.split("▪")[0].replace("Position:", "").strip()
+                foot = position_full_text_corrected.split("▪")[1].replace("Footed:", "").strip() if "▪" in position_full_text_corrected else "Desconhecido"
+            else:
+                position = "Desconhecida"
+                foot = "Desconhecido"
+
+            # Clube atual
+            club_tag_corrected = meta_div.find('strong', string=lambda x: x and 'Club:' in x)
+            team = club_tag_corrected.find_next_sibling('a').text.strip() if club_tag_corrected and club_tag_corrected.find_next_sibling('a') else "Clube Desconhecido"
 
             # Data de nascimento e idade
-            data_nascimento_span = meta_div.find('span', {'id': 'necro-birth'})
-            if data_nascimento_span and 'data-birth' in data_nascimento_span.attrs:
-                data_nascimento_str = data_nascimento_span['data-birth']
-                data_nascimento = datetime.strptime(data_nascimento_str, "%Y-%m-%d").date()
+            birth_info = meta_div.find('span', {'id': 'necro-birth'})
+            if birth_info:
+                birth_date = birth_info['data-birth']
+                birth_date_formatted = datetime.strptime(birth_date, "%Y-%m-%d").date()
                 hoje = datetime.now().date()
-                idade = hoje.year - data_nascimento.year - ((hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day))
+                age = hoje.year - birth_date_formatted.year - (
+                    (hoje.month, hoje.day) < (birth_date_formatted.month, birth_date_formatted.day)
+                )
             else:
-                idade = "Desconhecida"
+                birth_date = "Desconhecida"
+                age = "Desconhecida"
 
-            # Clube
-            clube_strong = meta_div.find('strong', string=lambda text: text and "Clube:" in text)
-            if clube_strong:
-                clube_p = clube_strong.find_parent('p')
-                clube_link = clube_p.find('a') if clube_p else None
-                clube = clube_link.text.strip() if clube_link else "Desconhecido"
-            else:
-                clube = "Desconhecido"
+
+            print(f"ID: {player_id}, Jogador: {name}, Time: {team}, Idade: {age}, Posição: {position}, Pé: {foot}")
+
 
             # Construir a lista de jogadores
-            jogadores = []
-            jogadores.append({
-                "jogador_id": jogador_id,
-                "nome_jogador": nome_jogador,
-                "clube": clube,
-                "idade": idade,
-                "posicao": posicao,
-                "pe_favorito": pe_favorito
+            players = []
+            players.append({
+                "player_id": player_id,
+                "name": name,
+                "team": team,
+                "age": age,
+                "position": position,
+                "foot": foot
             })
     
             # Passar a lista de jogadores ao gerenciador
-            self.db_manager.insert_or_update_jogador(jogadores)
+            self.db_manager.insert_or_update_players(players)
     
         else:
             self.log_failure(player_name, "Meta div não encontrada")
-            nome_jogador, posicao, pe_favorito, clube, idade = (
-                "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecida"
+            name, team, age, position, foot = (
+                "Desconhecido", "Desconhecida", "Desconhecido", "Desconhecido", "Desconhecido", "Desconhecido"
             )
 
 
@@ -173,30 +185,30 @@ class PlayerScoutScraper:
                 elif len(cells) == 3 and current_section:
                     data.append([current_section] + cells)
 
-            df = pd.DataFrame(data, columns=['Seção', 'Estatística', 'Por 90', 'Percentil'])
-            df['Por 90'] = pd.to_numeric(df['Por 90'], errors='coerce')
-            df['Percentil'] = pd.to_numeric(df['Percentil'], errors='coerce')
-            df.insert(0, 'ID do Jogador', jogador_id)
-            df.insert(1, 'Nome do Jogador', nome_jogador)
-            df.insert(2, 'Clube', clube)
-            df.insert(3, 'Idade', idade)
-            df.insert(4, 'Posição', posicao)
-            df.insert(5, 'Pé Favorito', pe_favorito)
+            df = pd.DataFrame(data, columns=['session', 'stat', 'per_90_minutes', 'percentil'])
+            df['per_90_minutes'] = pd.to_numeric(df['per_90_minutes'], errors='coerce')
+            df['percentil'] = pd.to_numeric(df['percentil'], errors='coerce')
+            df.insert(0, 'id', player_id)
+            df.insert(1, 'name', name)
+            df.insert(2, 'team', team)
+            df.insert(3, 'age', age)
+            df.insert(4, 'position', position)
+            df.insert(5, 'foot', foot)
             df['Data de Extração'] = datetime.now().strftime('%Y-%m-%d')
-            df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
+            #df['Posição'] = df['Posição'].str.split('▪').str[0].str.strip()
 
             # Construir a lista de estatísticas
-            estatisticas = []
+            statistics = []
             for _, row in df.iterrows():
-                estatisticas.append({
-                    'jogador_id': row['ID do Jogador'],
-                    'estatistica': row['Estatística'],
-                    'por_90': row['Por 90'],
-                    'percentil': row['Percentil']
+                statistics.append({
+                    'player_id': row['id'],
+                    'stat': row['stat'],
+                    'per_90_minutes': row['per_90_minutes'],
+                    'percentil': row['percentil']
                 })
 
             # Passar a lista de estatísticas ao gerenciador
-            self.db_manager.insert_or_update_estatisticas(estatisticas)
+            self.db_manager.insert_or_update_statistics(statistics)
 
                 
 

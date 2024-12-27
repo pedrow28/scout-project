@@ -13,24 +13,23 @@ import time
 from ratelimit import limits, sleep_and_retry
 
 
-
+#"liga": "Serie A", "url": "https://fbref.com/en/comps/24/Serie-A-Estatisticas"},
+#{"liga": "Liga Profesional de Fútbol Argentina", "url": "https://fbref.com/en/comps/21/Liga-Profesional-Argentina-Estatisticas"},
 
 
 ligas = [
-    {"liga": "Serie A", "url": "https://fbref.com/pt/comps/24/Serie-A-Estatisticas"}
-    {"liga": "Liga Profesional de Fútbol Argentina", "url": "https://fbref.com/pt/comps/21/Liga-Profesional-Argentina-Estatisticas"},
-    {"liga": "Chilean Primera División", "url": "https://fbref.com/pt/comps/35/Primera-Division-Estatisticas"},
-    {"liga": "Categoría Primera A", "url": "https://fbref.com/pt/comps/41/Primera-A-Estatisticas"},
-    {"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/pt/comps/58/Serie-A-Estatisticas"},
-    {"liga": "Liga MX", "url": "https://fbref.com/pt/comps/31/Liga-MX-Estatisticas"},
-    {"liga": "Paraguayan Primera División", "url": "https://fbref.com/pt/comps/61/Primeira-Division-Estatisticas"},
-    {"liga": "Liga 1 de Fútbol Profesional", "url": "https://fbref.com/pt/comps/44/Liga-1-Estatisticas"},
-    {"liga": "Primeira Liga", "url": "https://fbref.com/pt/comps/32/Primeira-Liga-Estatisticas"},
-    {"liga": "South African Premier Division", "url": "https://fbref.com/pt/comps/52/Premier-Division-Estatisticas"},
-    {"liga": "Uruguayan Primera División", "url": "https://fbref.com/pt/comps/45/Uruguayan-Primera-Division-Estatisticas"},
-    {"liga": "Major League Soccer", "url": "https://fbref.com/pt/comps/22/Major-League-Soccer-Estatisticas"},
-    {"liga": "Venezuelan Primera División", "url": "https://fbref.com/pt/comps/105/Venezuelan-Primera-Division-Estatisticas"},
-    {"liga": "Campeonato Brasileiro Série B", "url": "https://fbref.com/pt/comps/38/Serie-B-Estatisticas"}
+    {"liga": "Chilean Primera División", "url": "https://fbref.com/en/comps/35/Primera-Division-Estatisticas"},
+    {"liga": "Categoría Primera A", "url": "https://fbref.com/en/comps/41/Primera-A-Estatisticas"},
+    {"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/en/comps/58/Serie-A-Estatisticas"},
+    {"liga": "Liga MX", "url": "https://fbref.com/en/comps/31/Liga-MX-Estatisticas"},
+    {"liga": "Paraguayan Primera División", "url": "https://fbref.com/en/comps/61/Primeira-Division-Estatisticas"},
+    {"liga": "Liga 1 de Fútbol Profesional", "url": "https://fbref.com/en/comps/44/Liga-1-Estatisticas"},
+    {"liga": "Primeira Liga", "url": "https://fbref.com/en/comps/32/Primeira-Liga-Estatisticas"},
+    {"liga": "South African Premier Division", "url": "https://fbref.com/en/comps/52/Premier-Division-Estatisticas"},
+    {"liga": "Uruguayan Primera División", "url": "https://fbref.com/en/comps/45/Uruguayan-Primera-Division-Estatisticas"},
+    {"liga": "Major League Soccer", "url": "https://fbref.com/en/comps/22/Major-League-Soccer-Estatisticas"},
+    {"liga": "Venezuelan Primera División", "url": "https://fbref.com/en/comps/105/Venezuelan-Primera-Division-Estatisticas"},
+    {"liga": "Campeonato Brasileiro Série B", "url": "https://fbref.com/en/comps/38/Serie-B-Estatisticas"}
 ]
 
 
@@ -50,7 +49,7 @@ def main(url):
     # 1. Criar o scraper para a liga (gera o dicionário de URLs dos times)
     league_url = url
     league_scraper = LeagueScraper(league_url)
-    teams_data = league_scraper.run()  # Retorna o dicionário de times e suas URLs
+    #teams_data = league_scraper.run()  # Retorna o dicionário de times e suas URLs
     from ratelimit import limits, sleep_and_retry
 
     @sleep_and_retry
@@ -60,7 +59,7 @@ def main(url):
 
     teams_data = rate_limited_request()  # Retorna o dicionário de times e suas URLs
     print(f"URLs dos times extraídas: {teams_data}")
-    time.sleep(30)  # Espera 60 segundos para evitar bloqueio
+    #time.sleep(5)  # Espera 60 segundos para evitar bloqueio
 
     # 2. Criar o scraper para os scouts dos jogadores
     player_scraper = PlayerScoutScraper(teams_data, db_manager)

@@ -1,14 +1,13 @@
 import sqlite3
 
 
-
 class DatabaseManager:
     def __init__(self, db_path):
         """
-        Inicializa o gerenciador do banco de dados e cria as tabelas necessárias.
+        Initializes the database manager and creates the necessary tables.
 
         Args:
-            db_path (str): Caminho para o arquivo do banco de dados.
+            db_path (str): Path to the database file.
         """
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
@@ -16,86 +15,85 @@ class DatabaseManager:
 
     def _create_tables(self):
         """
-        Cria as tabelas de jogadores e estatísticas no banco de dados.
+        Creates the players and statistics tables in the database.
         """
-        # Tabela de Jogadores
+        # Players Table
         self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS jogadores (
-                jogador_id TEXT PRIMARY KEY,
-                nome TEXT,
-                time TEXT,
-                idade INTEGER,
-                posição TEXT,
-                pé_preferido TEXT
+            CREATE TABLE IF NOT EXISTS players (
+                player_id TEXT PRIMARY KEY,
+                name TEXT,
+                team TEXT,
+                age INTEGER,
+                position TEXT,
+                preferred_foot TEXT
             )
         """)
 
-        # Tabela de Estatísticas
+        # Statistics Table
         self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS estatisticas (
-                jogador_id TEXT,
-                estatistica TEXT,
-                por_90 REAL,
-                percentil REAL,
-                PRIMARY KEY (jogador_id, estatistica),
-                FOREIGN KEY (jogador_id) REFERENCES jogadores(jogador_id) ON DELETE CASCADE ON UPDATE NO ACTION
+            CREATE TABLE IF NOT EXISTS statistics (
+                player_id TEXT,
+                stat TEXT,
+                per_90_minutes REAL,
+                percentile REAL,
+                PRIMARY KEY (player_id, stat),
+                FOREIGN KEY (player_id) REFERENCES players(player_id) ON DELETE CASCADE ON UPDATE NO ACTION
             )
         """)
 
         self.connection.commit()
 
-    def insert_or_update_jogador(self, jogadores):
+    def insert_or_update_players(self, players):
         """
-        Insere ou atualiza as informações de um jogador no banco.
+        Inserts or updates player information in the database.
 
         Args:
-            jogador (dict): Dados do jogador, incluindo id, nome, time, idade, posição e pé_preferido.
+            players (list of dict): Player data, including id, name, team, age, position, and preferred_foot.
         """
-        for jogador in jogadores:
+        for player in players:
             self.cursor.execute("""
-                INSERT INTO jogadores (jogador_id, nome, time, idade, posição, pé_preferido)
-                VALUES (:jogador_id, :nome, :time, :idade, :posição, :pé_preferido)
-                ON CONFLICT(jogador_id) DO UPDATE SET
-                    nome = excluded.nome,
-                    time = excluded.time,
-                    idade = excluded.idade,
-                    posição = excluded.posição,
-                    pé_preferido = excluded.pé_preferido
+                INSERT INTO players (player_id, name, team, age, position, preferred_foot)
+                VALUES (:player_id, :name, :team, :age, :position, :preferred_foot)
+                ON CONFLICT(player_id) DO UPDATE SET
+                    name = excluded.name,
+                    team = excluded.team,
+                    age = excluded.age,
+                    position = excluded.position,
+                    preferred_foot = excluded.preferred_foot
             """, {
-                        'jogador_id': jogador['jogador_id'],
-                        'nome': jogador['nome_jogador'],
-                        'time': jogador['clube'],
-                        'idade': jogador['idade'],
-                        'posição': jogador['posicao'],
-                        'pé_preferido': jogador['pe_favorito']
-                })
-            self.connection.commit()
+                'player_id': player['player_id'],
+                'name': player['name'],
+                'team': player['team'],
+                'age': player['age'],
+                'position': player['position'],
+                'preferred_foot': player['foot']
+            })
+        self.connection.commit()
 
-    def insert_or_update_estatisticas(self, estatisticas):
+    def insert_or_update_statistics(self, statistics):
         """
-        Insere ou atualiza as estatísticas de um jogador no banco.
+        Inserts or updates player statistics in the database.
 
         Args:
-            jogador_id (str): ID do jogador.
-            estatisticas (list of dict): Lista de estatísticas do jogador.
+            statistics (list of dict): List of player statistics.
         """
-        for estatistica in estatisticas:
+        for stat in statistics:
             self.cursor.execute("""
-                INSERT INTO estatisticas (jogador_id, estatistica, por_90, percentil)
-                VALUES (:jogador_id, :estatistica, :por_90, :percentil)
-                ON CONFLICT(jogador_id, estatistica) DO UPDATE SET
-                    por_90 = excluded.por_90,
-                    percentil = excluded.percentil
+                INSERT INTO statistics (player_id, stat, per_90_minutes, percentile)
+                VALUES (:player_id, :stat, :per_90_minutes, :percentile)
+                ON CONFLICT(player_id, stat) DO UPDATE SET
+                    per_90_minutes = excluded.per_90_minutes,
+                    percentile = excluded.percentile
             """, {
-                'jogador_id': estatistica['jogador_id'],
-                'estatistica': estatistica['estatistica'],
-                'por_90': estatistica['por_90'],
-                'percentil': estatistica['percentil']
+                'player_id': stat['player_id'],  # Matches 'jogador_id' from the statistics field
+                'stat': stat['stat'],  # Matches 'stat'
+                'per_90_minutes': stat['per_90_minutes'],  # Matches 'per_90_minutes'
+                'percentile': stat['percentil']  # Matches 'percentil'
             })
         self.connection.commit()
 
     def close(self):
         """
-        Fecha a conexão com o banco de dados.
+        Closes the connection to the database.
         """
         self.connection.close()
