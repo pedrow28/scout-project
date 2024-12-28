@@ -155,7 +155,7 @@ requirement_analysis:
       - `Primary Statistics`: With their importance level (high/medium/low) and justifications.
       - `Secondary Statistics`: With their importance level and justifications.
     - A SQL-compatible methodology, considering the table structure, that includes:
-      - A formula or logic for calculating the composite index.
+      - A formula or logic for calculating the composite index using the per_90_minutes values from the selected statistics.
       - Threshold definitions for filtering players based on percentiles.
       - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
     - Additional instructions for querying positional data using substring matching (e.g., `LIKE '%CB%'`).
@@ -183,6 +183,44 @@ data_analysis:
     You must keep the limit of 30 players and provide a clear explanation of the selection process.
     If your search find less than 5 players, you can gradually decrease the percentile value until at least 5.
     Try to select many players as possible, but always keep the limit of 30 players.
+
+    Don't search players from the following teams:
+    -Botafogo (RJ)
+    -Flamengo
+    -Palmeiras
+    -São Paulo
+    -Santos
+    -Corinthians
+    -Internacional
+    -Grêmio
+    -Atlético Mineiro
+    -Cruzeiro
+    -Bahia
+    -Fortaleza
+    -Boca Juniors
+    -River Plate
+
+    Keep in mind that the statistics in the database are structured as a table with the following columns:
+
+      player_id: The unique identifier for each player.
+      stat: The name of the statistic (e.g., 'xG', 'xAG', 'Goals', etc.).
+      per_90_minutes: The value of the statistic calculated per 90 minutes of play.
+      percentile: The player's percentile rank for the statistic compared to all other players in the same position.
+
+    In this structure:
+
+      The stat column stores the names of the statistics (e.g., 'Progressive Carries', 'Assists').
+      The values for each statistic are represented by the per_90_minutes and percentile columns, where:
+      per_90_minutes: Reflects the player's performance for that stat normalized over 90 minutes of play.
+      percentile: Indicates how the player ranks for that stat relative to peers in the same position.
+
+    So, to evaluate players, you need to use CASE statements to identify the stats values and calculate the composite index.
+    Calculate the composite index using the values from the per_90_minutes, and use the percentiles as a threshold for selection.
+
+    Ensure your queries account for this structure when extracting and analyzing the data, using the methodology 
+    provided in the previous task.
+    - If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
+
   expected_output: >
     A JSON object containing:
     - `analyzed_players` (integer): Total number of players analyzed.
@@ -197,6 +235,7 @@ data_analysis:
         - `meets_threshold` (boolean): Whether the percentile meets the requirement.
       - `selection_justification` (string): Reason for selection.
     - `analysis_methodology` (string): Explanation of the selection process.
+    - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
   agent: analyst_agent
 
 report_generation:

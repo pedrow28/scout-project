@@ -1,101 +1,80 @@
 ```markdown
-# Relatório Abrangente sobre Jogadores Selecionados
+# Relatório Técnico: Análise de Jogadores de Futebol
 
-## Índice
-
-1. [Resumo Executivo](#1-resumo-executivo)
-2. [Metodologia de Análise](#2-metodologia-de-análise)
-3. [Perfis dos Jogadores](#3-perfis-dos-jogadores)
+## Sumário
+1. [Resumo Executivo](#resumo-executivo)
+2. [Metodologia de Análise](#metodologia-de-análise)
+3. [Perfis dos Jogadores](#perfis-dos-jogadores)
    - [Ezequiel Barco](#ezequiel-barco)
-   - [Santiago Simón](#santiago-simón)
-   - [Kevin Zenon](#kevin-zenon)
-   - [Cristian Medina](#cristian-medina)
-   - [Ramón Sosa](#ramón-sosa)
-4. [Análise Comparativa](#4-análise-comparativa)
-5. [Recomendações](#5-recomendações)
-6. [Apêndice Técnico](#6-apêndice-técnico)
+   - [Tomás Cuello](#tomás-cuello)
+4. [Análise Comparativa](#análise-comparativa)
+5. [Recomendações](#recomendações)
+6. [Apêndice Técnico](#apêndice-técnico)
 
 ## 1. Resumo Executivo
 
-Este relatório avalia cinco jovens futebolistas excepcionais selecionados de um grupo inicial de dezessete com base em suas habilidades de criação e criatividade. Cada jogador é examinado em profundidade, destacando suas conquistas estatísticas, adequação tática e áreas potenciais para crescimento. Esta análise conclui com uma análise comparativa e recomendações para as seleções de jogadores mais estrategicamente benéficas.
+Este relatório fornece uma análise abrangente de jogadores de futebol selecionados, com foco em suas potenciais contribuições para a dinâmica da equipe. Aproveitando medidas estatísticas e avaliações táticas, os jogadores foram avaliados e identificados por suas habilidades para atender a necessidades estratégicas específicas. A análise destaca especificamente Ezequiel Barco e Tomás Cuello, mostrando suas qualificações com base em um índice composto refinado que prioriza assistências, movimentos progressivos e atividade de scoring.
 
 ## 2. Metodologia de Análise
 
-Para descobrir jovens extremas de primeira linha, com 25 anos ou menos, o foco foi colocado nas habilidades de criatividade e criação de jogadas. Cada jogador foi avaliado com base em métricas de desempenho chave, como assistências, assistências esperadas (xAG), passes progressivos e conduções progressivas. Um índice composto foi implementado, enfatizando o desempenho além do limiar do 75º percentil, para agilizar os jogadores em candidatos mais promissores.
+A seleção de jogadores foi realizada usando uma abordagem de índice composto, ponderado da seguinte forma: Assistências (40%), Passes Progressivos (30%), Conduções Progressivas (20%) e Gols + Assistências (10%). Nosso framework de análise priorizou indicadores-chave de desempenho (KPIs) e limiares de percentil, visando determinar o impacto em campo e o valor dos jogadores. Os dados foram analisados para jogadores com menos de 25 anos de equipes não especificadas, combinando os desempenhos da temporada atual com tendências históricas para avaliar trajetórias de carreira e potencial.
 
 ## 3. Perfis dos Jogadores
 
 ### Ezequiel Barco
-- **Idade:** 25
-- **Time Atual:** Spartak Moscow
-- **Análise Estatística:** 
-  - **Assistências:** 0.17 (88º percentil, atende ao critério)
-  - **Passes Progressivos:** 9.73 (98º percentil, atende ao critério)
-  - **Conduções Progressivas:** 7.47 (99º percentil, atende ao critério)
-- **Avaliação de Ajuste Tático:** O elevado nível de Barco nas métricas de criação de jogadas o posiciona como um facilitador crítico nas fases ofensivas, habilidoso em ligar defesa ao ataque.
-- **Pontos Fortes:** Excelentes movimentos progressivos; alto potencial de assistências.
-- **Áreas para Desenvolvimento:** Maior consistência na criação de assistências pode aumentar seu impacto.
+- **Idade:** 25  
+- **Equipe Atual:** Spartak Moscou  
+- **Análise Estatística:**  
+  - Assistências por jogo: 0,17 (88º percentil)  
+  - Passes Progressivos: 9,73 por jogo (98º percentil)  
+  - Conduções Progressivas: 7,47 por jogo (99º percentil)  
+  - Gols + Assistências: 0,35 por jogo (92º percentil)  
+- **Avaliação de Ajuste Tático:**  
+  Ezequiel Barco é visto como um construtor de jogo de alto valor, capaz de avançar a jogada através do movimento habilidoso com a bola. Suas forças em facilitação progressiva se alinham bem com táticas que exigem transições ágeis e fortes parcerias laterais.  
+- **Forças e Áreas para Desenvolvimento:**  
+  As forças incluem manuseio ágil da bola e potencial de cruzamento. Para aumentar o impacto, sugere-se maior consistência na participação em gols.
 
-### Santiago Simón
-- **Idade:** 22
-- **Time Atual:** River Plate
-- **Análise Estatística:**
-  - **Passes Progressivos:** 8.42 (96º percentil, atende ao critério)
-  - **Conduções Progressivas:** 1.9 (87º percentil, atende ao critério)
-- **Avaliação de Ajuste Tático:** Sua proficiência em avançar o jogo o torna estrategicamente essencial para fases de transição.
-- **Pontos Fortes:** Impressionante habilidade em avançar o jogo de forma eficiente e consistente.
-- **Áreas para Desenvolvimento:** Melhorar sua produção criativa pode incrementar suas estatísticas de assistências.
-
-### Kevin Zenon
-- **Idade:** 23
-- **Time Atual:** Boca Juniors
-- **Análise Estatística:**
-  - **Passes Progressivos:** 6.33 (78º percentil, atende ao critério)
-  - **Conduções Progressivas:** 2.94 (97º percentil, atende ao critério)
-- **Avaliação de Ajuste Tático:** Suas investidas agressivas para frente contribuem significativamente para o impulso ofensivo.
-- **Pontos Fortes:** Notáveis conduções progressivas.
-- **Áreas para Desenvolvimento:** Aumentar a precisão nos passes progressivos melhoraria sua função de armador.
-
-### Cristian Medina
-- **Idade:** 22
-- **Time Atual:** Boca Juniors
-- **Análise Estatística:**
-  - **Passes Progressivos:** 5.6 (65º percentil, atende ao critério)
-  - **Conduções Progressivas:** 2.05 (89º percentil, atende ao critério)
-- **Avaliação de Ajuste Tático:** Medina é crucial para manter a pressão ofensiva por meio de suas conduções progressivas.
-- **Pontos Fortes:** Fortes contribuições através da progressão para frente.
-- **Áreas para Desenvolvimento:** Aumentar seu envolvimento em oportunidades de alto xAG poderia aprimorar sua contribuição geral na criação de jogadas.
-
-### Ramón Sosa
-- **Idade:** 25
-- **Time Atual:** Nottingham Forest
-- **Análise Estatística:**
-  - **Assistências:** 0.37 (93º percentil, atende ao critério)
-  - **Passes Progressivos:** 2.98 (26º percentil, não atende ao critério)
-  - **Conduções Progressivas:** 2.79 (51º percentil, atende ao critério)
-- **Avaliação de Ajuste Tático:** Embora suas assistências se destacam, seu impacto pode ser ainda mais aprimorado com movimentos progressivos melhorados.
-- **Pontos Fortes:** Alta taxa de assistências.
-- **Áreas para Desenvolvimento:** Melhorias nos passes progressivos são essenciais para maximizar sua utilidade.
+### Tomás Cuello
+- **Idade:** 24  
+- **Equipe Atual:** Athletico Paranaense  
+- **Análise Estatística:**  
+  - Assistências por jogo: 0,22 (72º percentil)  
+  - Passes Progressivos: 3,94 por jogo (53º percentil)  
+  - Conduções Progressivas: 4,57 por jogo (90º percentil)  
+  - Gols + Assistências: 0,36 por jogo (40º percentil)  
+- **Avaliação de Ajuste Tático:**  
+  O conjunto de habilidades de Tomás Cuello o posiciona como um colaborador versátil em cenários de transição rápida. Sua proficiência em avançar a posse através de dribles complementa sistemas que favorecem contra-ataques rápidos.  
+- **Forças e Áreas para Desenvolvimento:**  
+  As forças incluem conduções dinâmicas e avanço de jogadas. Ele deve focar em aprimorar a consciência tática em prol da criação de gols para aumentar seus ranks percentuais.
 
 ## 4. Análise Comparativa
 
-| Nome do Jogador   | Assistências | Passes Progressivos | Conduções Progressivas | Percentil | Adequação ao Papel Tático  |
-|-------------------|--------------|---------------------|------------------------|-----------|----------------------------|
-| Ezequiel Barco    | 0.17         | 9.73                | 7.47                   | 88-99     | Alta                       |
-| Santiago Simón    | N/A          | 8.42                | 1.9                    | 87-96     | Alta                       |
-| Kevin Zenon       | N/A          | 6.33                | 2.94                   | 78-97     | Moderada                   |
-| Cristian Medina   | N/A          | 5.6                 | 2.05                   | 65-89     | Moderada                   |
-| Ramón Sosa        | 0.37         | 2.98                | 2.79                   | 26-93     | Moderada                   |
+| Nome do Jogador  | Assistências | Passes Progressivos | Conduções Progressivas | Percentil | Adequação ao Papel Tático |
+|------------------|--------------|---------------------|------------------------|-----------|---------------------------|
+| Ezequiel Barco   | 0,17         | 9,73                | 7,47                   | 88-99     | Alta                      |
+| Tomás Cuello     | 0,22         | 3,94                | 4,57                   | 40-90     | Moderada                  |
 
 ## 5. Recomendações
 
-- **Candidato Principal:** Ezequiel Barco, devido à sua proficiência inigualável em avançar o jogo, que se alinha com as necessidades estratégicas.
-- **Investimento Potencial:** Santiago Simón para desenvolvimento contínuo, devido ao seu sucesso elevado nas métricas de criação de jogadas.
-- **Interesse em Desenvolvimento:** Monitoramento contínuo de Kevin Zenon e Cristian Medina, focando em melhorias de rota tática.
+Com base na análise, Ezequiel Barco é fortemente recomendado para funções que exigem altos graus de criação de jogadas e atividade de transição, adequadas para sistemas com ênfase em movimentos de ataque amplos. Tomás Cuello, embora menos potente em métricas de impacto estrela, demonstra potencial promissor de desenvolvimento para equipes explorando estratégias de verticalidade e contra-ataque. Recomenda-se monitoramento próximo e treinamento de habilidades direcionado para maximizar sua eficácia.
 
 ## 6. Apêndice Técnico
 
-Estatísticas detalhadas mostrando métricas individuais e classificações percentuais nas categorias analisadas estão disponíveis mediante solicitação para validação e formulação estratégica adicional. Essas consistências afirmam a confiabilidade da possível integração de Ezequiel Barco e Santiago Simón nas operações estratégicas.
+Foram fornecidas seguintes análises estatísticas detalhadas:
+
+- **Ezequiel Barco:**  
+  - Percentil de Assistências: 88  
+  - Percentil de Passes Progressivos: 98  
+  - Percentil de Conduções Progressivas: 99  
+  - Percentil de Gols + Assistências: 92  
+
+- **Tomás Cuello:**  
+  - Percentil de Assistências: 72  
+  - Percentil de Passes Progressivos: 53  
+  - Percentil de Conduções Progressivas: 90  
+  - Percentil de Gols + Assistências: 40  
+
+A análise estatística valida a escolha estratégica dos jogadores com base na forma atual deles e nas perspectivas de crescimento em alinhamento com as necessidades do framework tático.
 ```
 
-Salve o arquivo acima como `relatorio_jogadores.md`.
+This content should be saved as a `.md` file for proper markdown formatting and viewing.

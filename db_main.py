@@ -21,6 +21,7 @@ ligas = [
     #{"liga": "Chilean Primera División", "url": "https://fbref.com/en/comps/35/Primera-Division-Estatisticas"},
     #{"liga": "Categoría Primera A", "url": "https://fbref.com/en/comps/41/Primera-A-Estatisticas"},
     #{"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/en/comps/58/Serie-A-Estatisticas"},
+    {"liga": "Campeonato Brasileiro Série B", "url": "https://fbref.com/en/comps/38/Serie-B-Estatisticas"},
     {"liga": "Liga MX", "url": "https://fbref.com/en/comps/31/Liga-MX-Estatisticas"},
     {"liga": "Paraguayan Primera División", "url": "https://fbref.com/en/comps/61/Primeira-Division-Estatisticas"},
     {"liga": "Liga 1 de Fútbol Profesional", "url": "https://fbref.com/en/comps/44/Liga-1-Estatisticas"},
@@ -28,8 +29,8 @@ ligas = [
     {"liga": "South African Premier Division", "url": "https://fbref.com/en/comps/52/Premier-Division-Estatisticas"},
     {"liga": "Uruguayan Primera División", "url": "https://fbref.com/en/comps/45/Uruguayan-Primera-Division-Estatisticas"},
     {"liga": "Major League Soccer", "url": "https://fbref.com/en/comps/22/Major-League-Soccer-Estatisticas"},
-    {"liga": "Venezuelan Primera División", "url": "https://fbref.com/en/comps/105/Venezuelan-Primera-Division-Estatisticas"},
-    {"liga": "Campeonato Brasileiro Série B", "url": "https://fbref.com/en/comps/38/Serie-B-Estatisticas"}
+    {"liga": "Venezuelan Primera División", "url": "https://fbref.com/en/comps/105/Venezuelan-Primera-Division-Estatisticas"}
+    
 ]
 
 
