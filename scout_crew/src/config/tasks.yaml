@@ -1,35 +1,177 @@
 requirement_analysis:
   description: >
     Analyze the provided user input: {topic}. If the input is not in English, translate it.
-    Use the statistics document to identify the most relevant metrics for the analysis.
-    You must ensure that you are using only statistics that are in the database available for all players,
-    DON'T create new statistics, use only the ones that are available in the database.
-    Validate the input data for consistency. Return a structured JSON with selected statistics,
-    justifications, and clear categorizations (primary and secondary).
-    Be sure to use the positions abreviations as they are in the database, for example, 
-    "CB" for center-back and "FB" for full-back. The complete list of positions and their abbreviations
-    is available in the statistics document.
+    Use the statistics document to identify the most relevant metrics for the analysis, ensuring
+    that only statistics available in the database are considered. 
+
+    Those are the available statistics:
+
+
+
+
+
+      - **Goals Against**: Goals Against.
+      - **Shots on Target Against**: Shots on Target Against.
+      - **Save Percentage**: 
+        - Formula: (Shots on Target Against - Goals Against)/Shots on Target Against.
+        - Note: Not all shots on target are stopped by the keeper, many will be stopped by defenders.
+        - Does not include penalty kicks.
+      - **Wins**: Wins.
+      - **Draws**: Draws.
+      - **Losses**: Losses.
+      - **Clean Sheets**: 
+        - Full matches by goalkeeper where no goals are allowed.
+      - **Clean Sheet Percentage**: 
+        - Percentage of matches that result in clean sheets.
+      - **Penalty Kicks Attempted**: Penalty Kicks Attempted.
+      - **Penalty Kicks Allowed**: Penalty Kicks Allowed.
+      - **Penalty Kicks Saved**: Penalty Kicks Saved.
+      - **Penalty Kicks Missed**: Penalty Kicks Missed.
+      - **Save% (Penalty Kicks)**: 
+        - Penalty Save Percentage (Penalty Kick Goals Against/Penalty Kick Attempts).
+        - Note: Penalty shots that miss the target are not included.
+
+    
     
 
+
+
+      - **Goals Against**: Goals Against.
+      - **Penalty Kicks Allowed**: Penalty Kicks Allowed.
+      - **Free Kick Goals Against**: Free Kick Goals Against.
+      - **Corner Kick Goals Against**: Corner Kick Goals Against.
+      - **Own Goals Scored Against Goalkeeper**: Own Goals Scored Against Goalkeeper.
+      - **Post-Shot Expected Goals (PSxG)**: 
+        - Expected goals based on how likely the goalkeeper is to save the shot.
+        - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
+        - Provided by Opta.
+        - An underline indicates there is a match that is missing data, but it will be updated when available.
+      - **PSxG/SoT**: 
+        - Post-Shot Expected Goals per Shot on Target (not including penalty kicks).
+        - Higher numbers indicate that shots on target faced are more difficult to stop and more likely to score.
+      - **PSxG-GA**: 
+        - Post-Shot Expected Goals minus Goals Allowed.
+        - Positive numbers suggest better luck or an above-average ability to stop shots.
+        - Note: Does not include own goals.
+
+
+      - **Passes Completed (Launched)**: Passes longer than 40 yards.
+      - **Passes Attempted (Launched)**: Passes longer than 40 yards.
+      - **Pass Completion Percentage (Launched)**: Pass Completion Percentage for passes longer than 40 yards.
+      - **Passes Attempted (GK)**: Passes Attempted (excluding goal kicks).
+      - **Throws Attempted**: Throws Attempted.
+      - **Launch %**: 
+        - Percentage of Passes that were Launched (not including goal kicks).
+        - Passes longer than 40 yards.
+      - **Average Pass Length**: Average length of passes, in yards (not including goal kicks).
+      - **Goal Kicks**: Goal Kicks Attempted.
+      - **Launch% (Goal Kicks)**: 
+        - Percentage of Goal Kicks that were Launched.
+        - Passes longer than 40 yards.
+      - **Avg. Length of Goal Kicks**: Average length of goal kicks, in yards.
+
+      - **Crosses Faced**: Opponent's attempted crosses into penalty area.
+      - **Crosses Stopped**: Number of crosses into penalty area successfully stopped by the goalkeeper.
+      - **Crosses Stopped %**: Percentage of crosses into penalty area successfully stopped by the goalkeeper.
+      - **Def. Actions Outside Pen. Area**: Number of defensive actions outside of penalty area.
+      - **Avg. Distance of Def. Actions**: Average distance from goal (in yards) of all defensive actions.
+
+
+
+      - **Goals**: Goals scored or allowed.
+      - **Assists**: Assists.
+      - **Goals + Assists**: Goals and Assists.
+      - **Non-Penalty Goals**: Non-Penalty Goals.
+      - **Penalty Kicks Made**: Penalty Kicks Made.
+      - **Penalty Kicks Attempted**: Penalty Kicks Attempted.
+      - **Yellow Cards**: Yellow Cards.
+      - **Red Cards**: Red Cards.
+      - **xG: Expected Goals**: 
+        - Expected Goals.
+        - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
+        - Provided by Opta.
+        - An underline indicates there is a match that is missing data, but it will be updated when available.
+      - **npxG: Non-Penalty xG**: 
+        - Non-Penalty Expected Goals.
+        - Provided by Opta.
+        - An underline indicates there is a match that is missing data, but it will be updated when available.
+      - **xAG: Exp. Assisted Goals**: 
+        - Expected Assisted Goals.
+        - xG which follows a pass that assists a shot.
+        - Provided by Opta.
+        - An underline indicates there is a match that is missing data, but it will be updated when available.
+      - **npxG + xAG**: 
+      - Non-Penalty Expected Goals plus Assisted Goals.
+      - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
+      - Provided by Opta.
+      - An underline indicates there is a match that is missing data, but it will be updated when available.
+      - Minimum 30 minutes played per squad game to qualify as a leader.
+
+
+
+      - **Progressive Carries**: Carries that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any carry into the penalty area. Excludes carries which end in the defending 50% of the pitch.
+      - **Progressive Passes**: 
+      - Completed passes that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any completed pass into the penalty area.
+      - Excludes passes from the defending 40% of the pitch.
+      - **Progressive Passes Rec**: 
+      - Completed passes that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any completed pass into the penalty area.
+      - Excludes passes from the defending 40% of the pitch.
+
+
+    Keep in mind that the statistics in the database are structured as a table with the following columns:
+
+      player_id: The unique identifier for each player.
+      stat: The name of the statistic (e.g., 'xG', 'xAG', 'Goals', etc.).
+      per_90_minutes: The value of the statistic calculated per 90 minutes of play.
+      percentile: The player's percentile rank for the statistic compared to all other players in the same position.
+
+    In this structure:
+
+      The stat column stores the names of the statistics (e.g., 'Progressive Carries', 'Assists').
+      The values for each statistic are represented by the per_90_minutes and percentile columns, where:
+      per_90_minutes: Reflects the player's performance for that stat normalized over 90 minutes of play.
+      percentile: Indicates how the player ranks for that stat relative to peers in the same position.
+    Ensure your queries account for this structure when extracting and analyzing the data.
+
+
+
+    Instead of returning a JSON, your role is to provide:
+    1. A detailed list of statistics the next agent should fetch from the database, 
+       categorized as primary or secondary, with justifications for their selection.
+    2. A proposed methodology for calculating a composite index based on the selected statistics.
+       This methodology should allow the next agent to evaluate players effectively 
+       using SQL operations directly on the database.
+
+    Ensure that:
+     - You use the position abbreviations as listed in the statistics document (e.g., "CB" for center-back, "FB" for full-back).
+     - The methodology provided is optimized for execution in SQL and considers percentile-based thresholds.
+     - Remember to consider the table structure when defining the methodology and the SQL operations.
+     - DON'T use statistics that are not available in the database.
+     - If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
+     - If the user sets a age range, you should consider this in your analysis.
   expected_output: >
-    A JSON object containing the following fields:
-    - `requirements`: An object with:
-      - `position` (string): Required player position.
-      - `tactical_function` (string): Tactical role expected for the player.
-      - `key_characteristics` (list of strings): Essential characteristics.
-    - `primary_statistics` and `secondary_statistics`: Arrays of objects,
-      each representing a statistic that are available in the database, based on the document provided,
-      each with:
-      - `name` (string): Name of the statistic.
-      - `importance` (string): Criticality level ("high," "medium," or "low").
-      - `justification` (string): Reason for its importance.
-      - `minimum_percentile` (integer): Required minimum percentile.
+    A structured instruction in natural language containing:
+    - A clear list of selected statistics, divided into:
+      - `Primary Statistics`: With their importance level (high/medium/low) and justifications.
+      - `Secondary Statistics`: With their importance level and justifications.
+    - A SQL-compatible methodology, considering the table structure, that includes:
+      - A formula or logic for calculating the composite index.
+      - Threshold definitions for filtering players based on percentiles.
+      - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
+    - Additional instructions for querying positional data using substring matching (e.g., `LIKE '%CB%'`).
+    - A clear explanation of how to handle age range constraints in the analysis.
   agent: interpreter_agent
+
 
 data_analysis:
   description: >
     Perform a database analysis to identify the 30 most suitable players based on the selected statistics.
-    Use the percentiles as absolute evaluation metrics to compare players, rather than performing calculations with them.
+    
+    Upon receiving the statistics along with their assigned importance levels—categorized 
+    as either primary or secondary and ranked as high, medium, or low—create a composite 
+    index that provides an integrated evaluation of all these statistics, 
+    assigning appropriate weights to each based on their significance, rather than evaluating them individually..
+    
     Evaluate players by checking if their percentiles meet or exceed the required thresholds for the selected statistics.
     The positions in the table are stored in the following format:
 
@@ -39,9 +181,7 @@ data_analysis:
     search for values that contain the substring "CB" within them. Use a query that employs partial matching 
     (e.g., LIKE operator) to ensure the desired results are returned.
     You must keep the limit of 30 players and provide a clear explanation of the selection process.
-    If you find more than 30 players meeting the criteria, prioritize those with the highest percentiles
-    across key statistics without performing complex calculations.
-    If your search doesn't find any players, you can gradually decrease the percentile value until you find some.
+    If your search find less than 5 players, you can gradually decrease the percentile value until at least 5.
     Try to select many players as possible, but always keep the limit of 30 players.
   expected_output: >
     A JSON object containing:
@@ -75,7 +215,10 @@ report_generation:
                - Statistical Analysis
                - Tactical Fit Assessment
                - Strengths and Areas for Development
-            4. Comparative Analysis
+            4. Comparative Analysis with a table with the results of the selected players with the following columns:
+            | Player Name      | Assists | Progressive Passes | Progressive Carries | Percentile | Suitability for Tactical Role |
+            |------------------|---------|--------------------|---------------------|------------|------------------------------|
+            | Ezequiel Barco   | 0.17    | 9.73               | 7.47                | 88-99      | High                         |
             5. Recommendations
             6. Technical Appendix with detailed statistics
   agent: report_agent

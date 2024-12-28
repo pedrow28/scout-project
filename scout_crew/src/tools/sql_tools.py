@@ -70,7 +70,7 @@ class SQLListTablesTool(BaseTool):
         """
         try:
             list_tool = self.toolkit.get_tools()[2]  # Recupera a ferramenta de listagem de tabelas do toolkit
-            return list_tool.run(tool_input)  # Executa a listagem de tabelas
+            return list_tool.run("")  # Executa a listagem de tabelas
         except Exception as e:
             return f"Table listing error: {str(e)}"  # Retorna o erro em caso de falha
 

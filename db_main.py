@@ -20,7 +20,7 @@ from ratelimit import limits, sleep_and_retry
 ligas = [
     #{"liga": "Chilean Primera División", "url": "https://fbref.com/en/comps/35/Primera-Division-Estatisticas"},
     #{"liga": "Categoría Primera A", "url": "https://fbref.com/en/comps/41/Primera-A-Estatisticas"},
-    {"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/en/comps/58/Serie-A-Estatisticas"},
+    #{"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/en/comps/58/Serie-A-Estatisticas"},
     {"liga": "Liga MX", "url": "https://fbref.com/en/comps/31/Liga-MX-Estatisticas"},
     {"liga": "Paraguayan Primera División", "url": "https://fbref.com/en/comps/61/Primeira-Division-Estatisticas"},
     {"liga": "Liga 1 de Fútbol Profesional", "url": "https://fbref.com/en/comps/44/Liga-1-Estatisticas"},
