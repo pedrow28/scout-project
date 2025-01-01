@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\Acer\Projetos Git\scout-project\venv_scout\Lib\site-packages\botasaurus\browser_decorator.py", line 179, in run_task
+    result = func(driver, data)
+             ^^^^^^^^^^^^^^^^^^
+TypeError: SofaScoreScraper.fetch_player_stats() missing 2 required positional arguments: 'league_id' and 'season_id'

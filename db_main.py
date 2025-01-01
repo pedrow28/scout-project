@@ -1,85 +1,86 @@
-"""
-
-Constrói a base de dados de jogadores a partir de scouts da liga selecionada e
-exporta para a base geral.
-
-
-"""
-
-from src.iterator import LeagueScraper
-from src.scrapper import PlayerScoutScraper
-from src.dbmanager import DatabaseManager
-import time
-from ratelimit import limits, sleep_and_retry
+import pandas as pd
+from botasaurus.browser import browser, Driver
+import ScraperFC as sc
+from bs4 import BeautifulSoup
+import json
+from src.dbmanager import StatisticsDatabaseManager  # Certifique-se de ajustar o caminho corretamente
 
 
-#"liga": "Serie A", "url": "https://fbref.com/en/comps/24/Serie-A-Estatisticas"},
-#{"liga": "Liga Profesional de Fútbol Argentina", "url": "https://fbref.com/en/comps/21/Liga-Profesional-Argentina-Estatisticas"},
+@browser
+def get_players_stats(driver: Driver, data: dict) -> pd.DataFrame:
+    league_id = "325"
+    season_id = "58766"
+    offset = 0
+    accumulation = 'total'
+    self = sc.Sofascore()
+
+    results = []
+    while True:
+        request_url = (
+            'https://api.sofascore.com/api/v1'
+            f'/unique-tournament/{league_id}/season/{season_id}/statistics'
+            f'?limit=100&offset={offset}'
+            f'&accumulation={accumulation}'
+            f'&fields={self.concatenated_fields}'
+        )
+
+        print(f"Fetching data from: {request_url}")
+
+        response = driver.get(request_url)
+        html_content = response.get_content()
+
+        # Parse o HTML usando BeautifulSoup
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # Encontre o conteúdo da tag <pre>
+        pre_content = soup.find('pre').text
+
+        # Carregue o JSON a partir do texto
+        data = json.loads(pre_content)
+
+        # Acesse os resultados e acumule-os
+        new_results = data.get('results', [])
+        results.extend(new_results)
+
+        # Verifique se há mais páginas para processar
+        if len(new_results) < 100:
+            break
+
+        offset += 100
+
+    # Transformar os resultados acumulados em um DataFrame
+    if not results:
+        print("No data retrieved.")
+        return pd.DataFrame()
+
+    # Flatten todos os campos retornados no JSON
+    df = pd.json_normalize(results)
+    return df.to_dict(orient='records')  # Retorna como lista de dicionários
 
 
-ligas = [
-    #{"liga": "Chilean Primera División", "url": "https://fbref.com/en/comps/35/Primera-Division-Estatisticas"},
-    #{"liga": "Categoría Primera A", "url": "https://fbref.com/en/comps/41/Primera-A-Estatisticas"},
-    #{"liga": "Liga Profesional Ecuador", "url": "https://fbref.com/en/comps/58/Serie-A-Estatisticas"},
-    {"liga": "Campeonato Brasileiro Série B", "url": "https://fbref.com/en/comps/38/Serie-B-Estatisticas"},
-    {"liga": "Liga MX", "url": "https://fbref.com/en/comps/31/Liga-MX-Estatisticas"},
-    {"liga": "Paraguayan Primera División", "url": "https://fbref.com/en/comps/61/Primeira-Division-Estatisticas"},
-    {"liga": "Liga 1 de Fútbol Profesional", "url": "https://fbref.com/en/comps/44/Liga-1-Estatisticas"},
-    {"liga": "Primeira Liga", "url": "https://fbref.com/en/comps/32/Primeira-Liga-Estatisticas"},
-    {"liga": "South African Premier Division", "url": "https://fbref.com/en/comps/52/Premier-Division-Estatisticas"},
-    {"liga": "Uruguayan Primera División", "url": "https://fbref.com/en/comps/45/Uruguayan-Primera-Division-Estatisticas"},
-    {"liga": "Major League Soccer", "url": "https://fbref.com/en/comps/22/Major-League-Soccer-Estatisticas"},
-    {"liga": "Venezuelan Primera División", "url": "https://fbref.com/en/comps/105/Venezuelan-Primera-Division-Estatisticas"}
-    
-]
+def main():
+    # Caminho para o banco de dados
+    db_path = "statistics.db"
 
+    # Instancia o gerenciador de banco de dados
+    db_manager = StatisticsDatabaseManager(db_path)
 
-def main(url):
-    # Inicializar o gerenciador do banco de dados
-    """
-    Constrói a base de dados de jogadores a partir de scouts da liga selecionada.
-    
-    1. Cria o scraper para a liga e extrai o dicionário de URLs dos times.
-    2. Cria o scraper para os scouts dos jogadores e extrai o DataFrame consolidado.
-    3. Salva as informações no banco de dados.
-    
-    Returns:
-        None
-    """
-    db_manager = DatabaseManager("data/jogadores.db")
-    # 1. Criar o scraper para a liga (gera o dicionário de URLs dos times)
-    league_url = url
-    league_scraper = LeagueScraper(league_url)
-    #teams_data = league_scraper.run()  # Retorna o dicionário de times e suas URLs
-    from ratelimit import limits, sleep_and_retry
+    # Executa o scraping para obter os dados
+    print("Starting data scraping...")
+    raw_df = get_players_stats()
+    df = pd.DataFrame(raw_df)
 
-    @sleep_and_retry
-    @limits(calls=1, period=60)
-    def rate_limited_request():
-        return league_scraper.run()
+    # Verifica se o DataFrame contém dados
+    if df.empty:
+        print("No data retrieved from scraping.")
+    else:
+        print(f"Retrieved {len(df)} records. Updating the database...")
+        db_manager.insert_or_update_statistics(df)
 
-    teams_data = rate_limited_request()  # Retorna o dicionário de times e suas URLs
-    print(f"URLs dos times extraídas: {teams_data}")
-    #time.sleep(5)  # Espera 60 segundos para evitar bloqueio
-
-    # 2. Criar o scraper para os scouts dos jogadores
-    player_scraper = PlayerScoutScraper(teams_data, db_manager)
-    scout_data = player_scraper.run()  # Retorna o DataFrame consolidado
-    print(scout_data.head())  # Exibe as primeiras linhas para verificação
-
-    # Fechar a conexão com o banco de dados
+    # Fecha a conexão com o banco
     db_manager.close()
-    print("Processo concluído. Dados salvos no banco de dados.")
+    print("Database updated successfully.")
 
-@sleep_and_retry
-@limits(calls=1, period=10)
-def process_league(liga):
-    print(f"Processando liga: {liga['liga']}")
-    main(liga['url'])
-
-def process_all_leagues(leagues):
-    for liga in leagues:
-        process_league(liga)
 
 if __name__ == "__main__":
-    process_all_leagues(ligas)
+    main()
