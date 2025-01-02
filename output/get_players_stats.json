@@ -28217,8 +28217,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 3,
@@ -30977,8 +30977,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 0,
@@ -31529,8 +31529,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": "\u0641\u0627\u0628\u064a\u0648",
         "player.fieldTranslations.shortNameTranslation.ar": "\u0641\u0627\u0628\u064a\u0648",
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 0,
@@ -32357,8 +32357,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": "\u0643\u0648\u0633\u062a\u0627, \u062f\u064a\u064a\u063a\u0648",
         "player.fieldTranslations.shortNameTranslation.ar": "\u062f. \u0643\u0648\u0633\u062a\u0627",
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 1,
@@ -32564,8 +32564,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 0,
@@ -32633,8 +32633,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 1,
@@ -33185,8 +33185,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 4,
@@ -33599,8 +33599,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 0,
@@ -34082,8 +34082,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0413\u0440\u0435\u043c\u0438\u043e",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": NaN,
-        "team.type": NaN
+        "team.userCount": 0.0,
+        "team.type": 0.0
     },
     {
         "goals": 1,
@@ -38084,8 +38084,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0410\u0442\u043b\u0435\u0442\u0438\u043a\u043e \u041f\u0430\u0440\u0430\u043d\u0430\u044d\u043d\u0441\u0435",
         "player.fieldTranslations.nameTranslation.ar": "Emerson",
         "player.fieldTranslations.shortNameTranslation.ar": "Emerson",
-        "team.userCount": 0.0,
-        "team.type": 0.0
+        "team.userCount": NaN,
+        "team.type": NaN
     },
     {
         "goals": 1,
@@ -40430,8 +40430,8 @@
         "team.fieldTranslations.nameTranslation.ru": "\u0410\u0442\u043b\u0435\u0442\u0438\u043a\u043e \u041f\u0430\u0440\u0430\u043d\u0430\u044d\u043d\u0441\u0435",
         "player.fieldTranslations.nameTranslation.ar": NaN,
         "player.fieldTranslations.shortNameTranslation.ar": NaN,
-        "team.userCount": 0.0,
-        "team.type": 0.0
+        "team.userCount": NaN,
+        "team.type": NaN
     },
     {
         "goals": 0,

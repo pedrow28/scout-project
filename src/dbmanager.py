@@ -23,6 +23,7 @@ class StatisticsDatabaseManager:
                 player_name TEXT,
                 team_id TEXT,
                 team_name TEXT,
+                position TEXT,
                 goals INTEGER,
                 yellow_cards INTEGER,
                 red_cards INTEGER,
@@ -49,6 +50,20 @@ class StatisticsDatabaseManager:
                 PRIMARY KEY (player_id, team_id)
             )
         """)
+
+            # Players Table
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS players (
+                player_id TEXT PRIMARY KEY,
+                player_name TEXT,
+                team_name TEXT,
+                league TEXT,
+                position TEXT,
+                preferred_foot TEXT,
+                market_value REAL
+            )
+        """)
+
         self.connection.commit()
 
     def insert_or_update_statistics(self, dataframe):
@@ -61,14 +76,14 @@ class StatisticsDatabaseManager:
         for _, row in dataframe.iterrows():
             self.cursor.execute("""
                 INSERT INTO statistics (
-                    player_id, player_name, team_id, team_name, goals, yellow_cards, red_cards, 
+                    player_id, player_name, team_id, team_name, position, goals, yellow_cards, red_cards, 
                     ground_duels_won, ground_duels_won_percentage, aerial_duels_won, aerial_duels_won_percentage,
                     successful_dribbles, successful_dribbles_percentage, tackles, assists, 
                     accurate_passes_percentage, total_duels_won, total_duels_won_percentage, minutes_played, 
                     was_fouled, fouls, dispossessed, appearances, saves, interceptions, shots_on_target, expected_goals
                 )
                 VALUES (
-                    :player_id, :player_name, :team_id, :team_name, :goals, :yellow_cards, :red_cards, 
+                    :player_id, :player_name, :team_id, :team_name, :position, :goals, :yellow_cards, :red_cards, 
                     :ground_duels_won, :ground_duels_won_percentage, :aerial_duels_won, :aerial_duels_won_percentage,
                     :successful_dribbles, :successful_dribbles_percentage, :tackles, :assists, 
                     :accurate_passes_percentage, :total_duels_won, :total_duels_won_percentage, :minutes_played, 
@@ -77,6 +92,7 @@ class StatisticsDatabaseManager:
                 ON CONFLICT(player_id, team_id) DO UPDATE SET
                     player_name = excluded.player_name,
                     team_name = excluded.team_name,
+                    position = excluded.position,
                     goals = excluded.goals,
                     yellow_cards = excluded.yellow_cards,
                     red_cards = excluded.red_cards,
@@ -105,6 +121,7 @@ class StatisticsDatabaseManager:
                 'player_name': row['player.name'],
                 'team_id': row['team.id'],
                 'team_name': row['team.name'],
+                'position': row['position'],
                 'goals': row['goals'],
                 'yellow_cards': row['yellowCards'],
                 'red_cards': row['redCards'],
@@ -130,6 +147,40 @@ class StatisticsDatabaseManager:
                 'expected_goals': row['expectedGoals']
             })
         self.connection.commit()
+
+    def insert_or_update_players(self, dataframe):
+        """
+        Inserts or updates player information in the database.
+
+        Args:
+            dataframe (pd.DataFrame): DataFrame containing player information.
+        """
+        for _, row in dataframe.iterrows():
+            self.cursor.execute("""
+                INSERT INTO players (
+                    player_id, player_name, team_name, league, position, preferred_foot, market_value
+                )
+                VALUES (
+                    :player_id, :player_name, :team_name, :league, :position, :preferred_foot, :market_value
+                )
+                ON CONFLICT(player_id) DO UPDATE SET
+                    player_name = excluded.player_name,
+                    team_name = excluded.team_name,
+                    league = excluded.league,
+                    position = excluded.position,
+                    preferred_foot = excluded.preferred_foot,
+                    market_value = excluded.market_value
+            """, {
+                'player_id': row['player_id'],
+                'player_name': row['player_name'],
+                'team_name': row['team_name'],
+                'league': row['league'],
+                'position': row['position'],
+                'preferred_foot': row['preferred_foot'],
+                'market_value': row['market_value']
+            })
+        self.connection.commit()
+
 
     def close(self):
         """
