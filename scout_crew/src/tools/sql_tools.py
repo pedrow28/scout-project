@@ -13,7 +13,7 @@ api_key = os.environ["OPENAI_API_KEY"]
 
 # Configuração inicial do banco de dados e ferramentas
 # Conexão com o banco de dados usando SQLAlchemy e criação do toolkit
-db = SQLDatabase.from_uri("sqlite:///data//jogadores.db")  # Conexão com banco de dados SQLite
+db = SQLDatabase.from_uri("sqlite:///data//statistics.db")  # Conexão com banco de dados SQLite
 llm = ChatOpenAI(api_key=api_key, model_name="gpt-4o", temperature=0)  # Instância de LLM para auxiliar na interação
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)  # Toolkit para combinar LLM e SQL Database
 

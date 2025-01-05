@@ -7,131 +7,59 @@ requirement_analysis:
     Those are the available statistics:
 
 
+    ### **Player and Team Information**
+    1. **player_id**: Unique identifier for the player.
+    2. **player_name**: Full name of the player.
+    3. **team_id**: Unique identifier for the team.
+    4. **team_name**: Name of the team the player belongs to.
 
+    ### **Performance Metrics**
 
+    #### Goals and Cards
+    5. **goals**: Number of goals scored by the player.
+    6. **yellow_cards**: Total number of yellow cards received.
+    7. **red_cards**: Total number of red cards received.
 
-      - **Goals Against**: Goals Against.
-      - **Shots on Target Against**: Shots on Target Against.
-      - **Save Percentage**: 
-        - Formula: (Shots on Target Against - Goals Against)/Shots on Target Against.
-        - Note: Not all shots on target are stopped by the keeper, many will be stopped by defenders.
-        - Does not include penalty kicks.
-      - **Wins**: Wins.
-      - **Draws**: Draws.
-      - **Losses**: Losses.
-      - **Clean Sheets**: 
-        - Full matches by goalkeeper where no goals are allowed.
-      - **Clean Sheet Percentage**: 
-        - Percentage of matches that result in clean sheets.
-      - **Penalty Kicks Attempted**: Penalty Kicks Attempted.
-      - **Penalty Kicks Allowed**: Penalty Kicks Allowed.
-      - **Penalty Kicks Saved**: Penalty Kicks Saved.
-      - **Penalty Kicks Missed**: Penalty Kicks Missed.
-      - **Save% (Penalty Kicks)**: 
-        - Penalty Save Percentage (Penalty Kick Goals Against/Penalty Kick Attempts).
-        - Note: Penalty shots that miss the target are not included.
+    #### Duels and Challenges
+    8. **ground_duels_won**: Number of ground duels won by the player.
+    9. **ground_duels_won_percentage**: Percentage of ground duels won by the player.
+    10. **aerial_duels_won**: Number of aerial duels won by the player.
+    11. **aerial_duels_won_percentage**: Percentage of aerial duels won by the player.
 
-    
-    
+    #### Dribbling and Tackles
+    12. **successful_dribbles**: Total number of successful dribbles.
+    13. **successful_dribbles_percentage**: Percentage of successful dribbles.
+    14. **tackles**: Total number of tackles made.
 
+    #### Passing
+    15. **assists**: Number of assists provided by the player.
+    16. **accurate_passes_percentage**: Percentage of passes completed successfully.
 
+    #### Overall Duels
+    17. **total_duels_won**: Total number of duels won (ground + aerial).
+    18. **total_duels_won_percentage**: Percentage of total duels won.
 
-      - **Goals Against**: Goals Against.
-      - **Penalty Kicks Allowed**: Penalty Kicks Allowed.
-      - **Free Kick Goals Against**: Free Kick Goals Against.
-      - **Corner Kick Goals Against**: Corner Kick Goals Against.
-      - **Own Goals Scored Against Goalkeeper**: Own Goals Scored Against Goalkeeper.
-      - **Post-Shot Expected Goals (PSxG)**: 
-        - Expected goals based on how likely the goalkeeper is to save the shot.
-        - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
-        - Provided by Opta.
-        - An underline indicates there is a match that is missing data, but it will be updated when available.
-      - **PSxG/SoT**: 
-        - Post-Shot Expected Goals per Shot on Target (not including penalty kicks).
-        - Higher numbers indicate that shots on target faced are more difficult to stop and more likely to score.
-      - **PSxG-GA**: 
-        - Post-Shot Expected Goals minus Goals Allowed.
-        - Positive numbers suggest better luck or an above-average ability to stop shots.
-        - Note: Does not include own goals.
+    #### Playing Time
+    19. **minutes_played**: Total number of minutes the player has been on the field.
 
+    ### **Fouls and Discipline**
+    20. **was_fouled**: Number of times the player was fouled.
+    21. **fouls**: Number of fouls committed by the player.
+    22. **dispossessed**: Number of times the player lost possession due to an opponent.
 
-      - **Passes Completed (Launched)**: Passes longer than 40 yards.
-      - **Passes Attempted (Launched)**: Passes longer than 40 yards.
-      - **Pass Completion Percentage (Launched)**: Pass Completion Percentage for passes longer than 40 yards.
-      - **Passes Attempted (GK)**: Passes Attempted (excluding goal kicks).
-      - **Throws Attempted**: Throws Attempted.
-      - **Launch %**: 
-        - Percentage of Passes that were Launched (not including goal kicks).
-        - Passes longer than 40 yards.
-      - **Average Pass Length**: Average length of passes, in yards (not including goal kicks).
-      - **Goal Kicks**: Goal Kicks Attempted.
-      - **Launch% (Goal Kicks)**: 
-        - Percentage of Goal Kicks that were Launched.
-        - Passes longer than 40 yards.
-      - **Avg. Length of Goal Kicks**: Average length of goal kicks, in yards.
+    ### **Match Participation**
+    23. **appearances**: Number of matches the player has participated in.
 
-      - **Crosses Faced**: Opponent's attempted crosses into penalty area.
-      - **Crosses Stopped**: Number of crosses into penalty area successfully stopped by the goalkeeper.
-      - **Crosses Stopped %**: Percentage of crosses into penalty area successfully stopped by the goalkeeper.
-      - **Def. Actions Outside Pen. Area**: Number of defensive actions outside of penalty area.
-      - **Avg. Distance of Def. Actions**: Average distance from goal (in yards) of all defensive actions.
+    ### **Goalkeeping Metrics**
+    24. **saves**: Total number of saves made (for goalkeepers).
 
+    ### **Defensive Metrics**
+    25. **interceptions**: Total number of interceptions made.
 
+    ### **Shooting Metrics**
+    26. **shots_on_target**: Number of shots on target by the player.
+    27. **expected_goals**: Expected goals metric, which evaluates the quality of chances created or taken by the player.
 
-      - **Goals**: Goals scored or allowed.
-      - **Assists**: Assists.
-      - **Goals + Assists**: Goals and Assists.
-      - **Non-Penalty Goals**: Non-Penalty Goals.
-      - **Penalty Kicks Made**: Penalty Kicks Made.
-      - **Penalty Kicks Attempted**: Penalty Kicks Attempted.
-      - **Yellow Cards**: Yellow Cards.
-      - **Red Cards**: Red Cards.
-      - **xG: Expected Goals**: 
-        - Expected Goals.
-        - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
-        - Provided by Opta.
-        - An underline indicates there is a match that is missing data, but it will be updated when available.
-      - **npxG: Non-Penalty xG**: 
-        - Non-Penalty Expected Goals.
-        - Provided by Opta.
-        - An underline indicates there is a match that is missing data, but it will be updated when available.
-      - **xAG: Exp. Assisted Goals**: 
-        - Expected Assisted Goals.
-        - xG which follows a pass that assists a shot.
-        - Provided by Opta.
-        - An underline indicates there is a match that is missing data, but it will be updated when available.
-      - **npxG + xAG**: 
-      - Non-Penalty Expected Goals plus Assisted Goals.
-      - xG totals include penalty kicks but do not include penalty shootouts (unless otherwise noted).
-      - Provided by Opta.
-      - An underline indicates there is a match that is missing data, but it will be updated when available.
-      - Minimum 30 minutes played per squad game to qualify as a leader.
-
-
-
-      - **Progressive Carries**: Carries that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any carry into the penalty area. Excludes carries which end in the defending 50% of the pitch.
-      - **Progressive Passes**: 
-      - Completed passes that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any completed pass into the penalty area.
-      - Excludes passes from the defending 40% of the pitch.
-      - **Progressive Passes Rec**: 
-      - Completed passes that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes, or any completed pass into the penalty area.
-      - Excludes passes from the defending 40% of the pitch.
-
-
-    Keep in mind that the statistics in the database are structured as a table with the following columns:
-
-      player_id: The unique identifier for each player.
-      stat: The name of the statistic (e.g., 'xG', 'xAG', 'Goals', etc.).
-      per_90_minutes: The value of the statistic calculated per 90 minutes of play.
-      percentile: The player's percentile rank for the statistic compared to all other players in the same position.
-
-    In this structure:
-
-      The stat column stores the names of the statistics (e.g., 'Progressive Carries', 'Assists').
-      The values for each statistic are represented by the per_90_minutes and percentile columns, where:
-      per_90_minutes: Reflects the player's performance for that stat normalized over 90 minutes of play.
-      percentile: Indicates how the player ranks for that stat relative to peers in the same position.
-    Ensure your queries account for this structure when extracting and analyzing the data.
 
 
 
@@ -143,22 +71,22 @@ requirement_analysis:
        using SQL operations directly on the database.
 
     Ensure that:
-     - You use the position abbreviations as listed in the statistics document (e.g., "CB" for center-back, "FB" for full-back).
-     - The methodology provided is optimized for execution in SQL and considers percentile-based thresholds.
+     - You use the position abbreviations as listed in the statistics document (e.g., "D"(defensive) for center-back, "F" (Forward) for wingers).
      - Remember to consider the table structure when defining the methodology and the SQL operations.
      - DON'T use statistics that are not available in the database.
      - If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
      - If the user sets a age range, you should consider this in your analysis.
+     - If the user sets a position, you should consider this in your analysis.
+     - Consider the user's constraints when selecting the statistics and defining the methodology.
+     - Set a minimum minutes played threshold to ensure the players have a significant impact on the game (e.g., 1000 minutes or at least 15 appearences).
   expected_output: >
     A structured instruction in natural language containing:
     - A clear list of selected statistics, divided into:
       - `Primary Statistics`: With their importance level (high/medium/low) and justifications.
       - `Secondary Statistics`: With their importance level and justifications.
     - A SQL-compatible methodology, considering the table structure, that includes:
-      - A formula or logic for calculating the composite index using the per_90_minutes values from the selected statistics.
-      - Threshold definitions for filtering players based on percentiles.
+      - A formula or logic for calculating the composite index using the from the selected statistics.
       - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
-    - Additional instructions for querying positional data using substring matching (e.g., `LIKE '%CB%'`).
     - A clear explanation of how to handle age range constraints in the analysis.
   agent: interpreter_agent
 
@@ -172,20 +100,12 @@ data_analysis:
     index that provides an integrated evaluation of all these statistics, 
     assigning appropriate weights to each based on their significance, rather than evaluating them individually..
     
-    Evaluate players by checking if their percentiles meet or exceed the required thresholds for the selected statistics.
-    The positions in the table are stored in the following format:
 
-    DF (CB)
-
-    Therefore, if you need to search for "CB" or any other position, you should not look for an exact match but instead
-    search for values that contain the substring "CB" within them. Use a query that employs partial matching 
-    (e.g., LIKE operator) to ensure the desired results are returned.
     You must keep the limit of 30 players and provide a clear explanation of the selection process.
-    If your search find less than 5 players, you can gradually decrease the percentile value until at least 5.
     Try to select many players as possible, but always keep the limit of 30 players.
 
     Don't search players from the following teams:
-    -Botafogo (RJ)
+    -Botafogo
     -Flamengo
     -Palmeiras
     -São Paulo
@@ -200,26 +120,16 @@ data_analysis:
     -Boca Juniors
     -River Plate
 
-    Keep in mind that the statistics in the database are structured as a table with the following columns:
 
-      player_id: The unique identifier for each player.
-      stat: The name of the statistic (e.g., 'xG', 'xAG', 'Goals', etc.).
-      per_90_minutes: The value of the statistic calculated per 90 minutes of play.
-      percentile: The player's percentile rank for the statistic compared to all other players in the same position.
-
-    In this structure:
-
-      The stat column stores the names of the statistics (e.g., 'Progressive Carries', 'Assists').
-      The values for each statistic are represented by the per_90_minutes and percentile columns, where:
-      per_90_minutes: Reflects the player's performance for that stat normalized over 90 minutes of play.
-      percentile: Indicates how the player ranks for that stat relative to peers in the same position.
-
-    So, to evaluate players, you need to use CASE statements to identify the stats values and calculate the composite index.
-    Calculate the composite index using the values from the per_90_minutes, and use the percentiles as a threshold for selection.
-
-    Ensure your queries account for this structure when extracting and analyzing the data, using the methodology 
-    provided in the previous task.
-    - If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
+    If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
+    Ensure that:
+     - You use the position abbreviations as listed in the statistics document (e.g., "D"(defensive) for center-back, "F" (Forward) for wingers).
+     - Remember to consider the table structure when defining the methodology and the SQL operations.
+     - DON'T use statistics that are not available in the database.
+     - If the user sets a age range, you should consider this in your analysis.
+     - If the user sets a position, you should consider this in your analysis.
+     - Consider the user's constraints when selecting the statistics and defining the methodology.
+     - Set a minimum minutes played threshold to ensure the players have a significant impact on the game (e.g., 1000 minutes or at least 15 appearences).
 
   expected_output: >
     A JSON object containing:
@@ -231,8 +141,6 @@ data_analysis:
       - `age` (integer): Player's age.
       - `key_statistics` (object): Each statistic name maps to:
         - `value` (float): Statistic value (absolute).
-        - `percentile` (integer): Percentile ranking (used as an evaluation threshold).
-        - `meets_threshold` (boolean): Whether the percentile meets the requirement.
       - `selection_justification` (string): Reason for selection.
     - `analysis_methodology` (string): Explanation of the selection process.
     - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
@@ -255,9 +163,9 @@ report_generation:
                - Tactical Fit Assessment
                - Strengths and Areas for Development
             4. Comparative Analysis with a table with the results of the selected players with the following columns:
-            | Player Name      | Assists | Progressive Passes | Progressive Carries | Percentile | Suitability for Tactical Role |
-            |------------------|---------|--------------------|---------------------|------------|------------------------------|
-            | Ezequiel Barco   | 0.17    | 9.73               | 7.47                | 88-99      | High                         |
+
+            player name, player team, all columns with the statiscs used in the analysis, and a column with the suitability for the tactical role.
+           
             5. Recommendations
             6. Technical Appendix with detailed statistics
   agent: report_agent

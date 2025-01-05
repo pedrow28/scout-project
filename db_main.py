@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import json
 from src.dbmanager import StatisticsDatabaseManager  # Certifique-se de ajustar o caminho corretamente
 
-ligas_futebol = [
+feito = [
     {
         "nome_liga": "Série A do Campeonato Brasileiro",
         "temporada": "2024",
@@ -29,7 +29,11 @@ ligas_futebol = [
         "temporada": "2024",
         "id_liga": "278",
         "id_temporada": "58264"
-    },
+    }
+]
+
+ligas_futebol = [
+
     {
         "nome_liga": "Primeira Divisão da Colômbia",
         "temporada": "2024",
@@ -141,47 +145,66 @@ for liga in ligas_futebol:
         return df.to_dict(orient='records')  # Retorna como lista de dicionários
 
     @browser
-    def fetch_player_details(driver: Driver, player_ids):
+    def fetch_player_details(driver, player_id):
         """
-        Fetches detailed player information using their IDs.
+        Fetches detailed player information using their IDs and consolidates the data into a pandas DataFrame.
 
         Args:
-            driver (Driver): The browser driver instance.
-            player_ids (list or int): List of player IDs or a single player ID.
+            driver (Driver): The browser driver instance used for making requests.
+            player_ids (list or int): A list of player IDs or a single player ID to fetch details for.
 
         Returns:
-            pd.DataFrame: DataFrame containing player details.
+            pd.DataFrame: A DataFrame containing consolidated player details.
         """
-        # Garantir que player_ids seja uma lista
-        if isinstance(player_ids, int):  # Caso seja um único ID
-            player_ids = [str(player_ids)]  # Converte para uma lista com um único elemento
-        elif isinstance(player_ids, list):  # Caso seja uma lista
-            player_ids = [str(pid) for pid in player_ids]  # Converte todos os elementos para string
+        import json
+        import pandas as pd
+        from bs4 import BeautifulSoup
 
-        base_url = 'https://api.sofascore.com/api/v1/player/'
-        player_data = []
 
-        for player_id in player_ids:
-            request_url = f'{base_url}{player_id}'
-            print(f"Fetching player details for ID: {player_id}")
-            response = driver.get(request_url)
-            html_content = response.get_content()
-            soup = BeautifulSoup(html_content, 'html.parser')
-            pre_content = soup.find('pre').text
-            data = json.loads(pre_content)
 
-            player_data.append({
-                'player_id': data.get('id'),
-                'player_name': data.get('name'),
-                'team_name': data.get('team', {}).get('name'),
-                'league': nome_liga,
-                'position': data.get('position'),
-                'preferred_foot': data.get('preferredFoot'),
-                'market_value': data.get('marketValue', 0)
-            })
+        base_url = 'https://api.sofascore.com/api/v1/player/'  # Base URL da API
 
-        data_player = pd.json_normalize(player_data)
-        return data_player.to_dict(orient='records')
+        request_url = f'{base_url}{player_id}'
+        print(f"Fetching player details for ID: {player_id}")
+
+        # Envia a requisição
+        response = driver.get(request_url)
+        html_content = response.get_content()
+
+        # Usa BeautifulSoup para extrair o JSON dentro da tag <pre>
+        soup = BeautifulSoup(html_content, 'html.parser')
+        pre_tag = soup.find('pre')
+
+
+        pre_content = pre_tag.text
+        data = json.loads(pre_content)  # Converte o texto para um dicionário Python
+
+            # Acessa os detalhes do jogador
+        player_info = data.get('player', {})
+        if player_info:  # Verifica se há dados para o jogador
+            # Extrai os campos desejados
+            extracted_data = {
+            "player_id": player_info.get("id"),
+            "player_name": player_info.get("name"),
+            "team_name": player_info.get("team", {}).get("name"),
+            "league": player_info.get("team", {}).get("tournament", {}).get("name"),
+            "position": player_info.get("position"),
+            "preferred_foot": player_info.get("preferredFoot"),
+            "market_value": player_info.get("proposedMarketValue"),
+        }
+            print(extracted_data)  # Adiciona os dados à lista
+       # Converte a lista de dicionários para um DataFrame
+
+        if extracted_data:
+            player_df = pd.json_normalize(extracted_data)  # Normaliza os dados JSON para o formato tabular
+            #player_df = pd.DataFrame(player_df)  # Retorna um DataFrame vazio caso não haja dados
+            #print(player_df.head())
+        else:
+            print("No player data found.")
+
+        df = pd.json_normalize(extracted_data)
+        return df.to_dict(orient='records')
+
 
 
 
@@ -196,47 +219,25 @@ for liga in ligas_futebol:
         print("Starting data scraping...")
         raw_df = get_players_stats()
         df = pd.DataFrame(raw_df)
-        players_ids = df['player.id'].unique().tolist()
-        raw_players = fetch_player_details(players_ids)
-        players_df = pd.DataFrame(raw_players)
-        # Adicionar posição
-        df = df.merge(
-            players_df[['player_id', 'position']],
-            left_on='player.id',
-            right_on='player_id',
-            how='left'
-        )
-        
-        print(players_ids)
-
-                # Verifica se o DataFrame contém dados
+        ## Atualizando base estatistica
         if df.empty:
             print("No data retrieved from scraping.")
         else:
             print(f"Retrieved {len(df)} records. Updating the database...")
             db_manager.insert_or_update_statistics(df)
-            db_manager.insert_or_update_players(players_df)
-
-        
-
-       
 
 
 
+        print(df.head())
+        players_ids = df['player.id'].unique().tolist()
+        print(players_ids)
 
 
-        # Fetch detailed player information
-        print("Fetching player details...")
+        for id in players_ids:
+            player_df = fetch_player_details(id)
+            player_df = pd.DataFrame(player_df)
+            db_manager.insert_or_update_players(player_df)
 
-
-        
-
-        db_manager.insert_or_update_players(players_df)
-
-
-
-
-            
 
         # Fecha a conexão com o banco
         db_manager.close()
