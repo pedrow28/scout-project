@@ -55,6 +55,7 @@ class StatisticsDatabaseManager:
             CREATE TABLE IF NOT EXISTS players (
                 player_id TEXT PRIMARY KEY,
                 player_name TEXT,
+                age INTEGER,
                 team_name TEXT,
                 league TEXT,
                 position TEXT,
@@ -155,14 +156,15 @@ class StatisticsDatabaseManager:
         for _, row in dataframe.iterrows():
             self.cursor.execute("""
                 INSERT INTO players (
-                    player_id, player_name, team_name, league, position, preferred_foot, market_value
+                    player_id, player_name, age, team_name, league, position, preferred_foot, market_value
                 )
                 VALUES (
-                    :player_id, :player_name, :team_name, :league, :position, :preferred_foot, :market_value
+                    :player_id, :player_name, :age, :team_name, :league, :position, :preferred_foot, :market_value
                 )
                 ON CONFLICT(player_id) DO UPDATE SET
                     player_name = excluded.player_name,
                     team_name = excluded.team_name,
+                    age = excluded.age,
                     league = excluded.league,
                     position = excluded.position,
                     preferred_foot = excluded.preferred_foot,
@@ -170,6 +172,7 @@ class StatisticsDatabaseManager:
             """, {
                 'player_id': row['player_id'],
                 'player_name': row['player_name'],
+                'age': row['age'],
                 'team_name': row['team_name'],
                 'league': row['league'],
                 'position': row['position'],

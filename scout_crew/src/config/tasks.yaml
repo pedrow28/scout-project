@@ -1,12 +1,21 @@
 requirement_analysis:
   description: >
-    Analyze the provided user input: {topic}. If the input is not in English, translate it.
-    Use the statistics document to identify the most relevant metrics for the analysis, ensuring
-    that only statistics available in the database are considered. 
+    # Main Analysis
+    Analyze the user's input: {topic}. If it is not in English, translate it.
+    Identify relevant metrics available in the players and statistics tables,
+    considering the complete database structure.
 
-    Those are the available statistics:
+    # Available Data
+    ## Players Table:
+    - player_id: Unique identifier for the player
+    - player_name: Full name
+    - team_name: Current team
+    - league: Current league
+    - position: Position
+    - preferred_foot: Dominant foot
+    - market_value: Market value
 
-
+    ## Statistics Table:
     ### **Player and Team Information**
     1. **player_id**: Unique identifier for the player.
     2. **player_name**: Full name of the player.
@@ -60,131 +69,177 @@ requirement_analysis:
     26. **shots_on_target**: Number of shots on target by the player.
     27. **expected_goals**: Expected goals metric, which evaluates the quality of chances created or taken by the player.
 
+    # Analysis Requirements
+    1. Establish ranges for:
+       - Acceptable market value by position
+       - Minimum playing time (e.g., 1000 minutes) or appearances (e.g., 15)
+       
 
+    2. Define normalization criteria:
+       - Weights by position
+       - Bonus for versatility (dominant foot)
 
+    3. Select relevant statistics:
+       - Primary: High/medium/low importance with justifications
+       - Secondary: High/medium/low importance with justifications
+       - Consider league and position context
 
-    Instead of returning a JSON, your role is to provide:
-    1. A detailed list of statistics the next agent should fetch from the database, 
-       categorized as primary or secondary, with justifications for their selection.
-    2. A proposed methodology for calculating a composite index based on the selected statistics.
-       This methodology should allow the next agent to evaluate players effectively 
-       using SQL operations directly on the database.
+    4. Ensure that the correct position is provided as an instruction. 
+       You use the position abbreviations as listed in the statistics document (e.g., "CB" for center-back, "FB" for full-back).
+       If the user sets others filters, as age, market value, league, etc., consider them in the analysis.
 
-    Ensure that:
-     - You use the position abbreviations as listed in the statistics document (e.g., "D"(defensive) for center-back, "F" (Forward) for wingers).
-     - Remember to consider the table structure when defining the methodology and the SQL operations.
-     - DON'T use statistics that are not available in the database.
-     - If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
-     - If the user sets a age range, you should consider this in your analysis.
-     - If the user sets a position, you should consider this in your analysis.
-     - Consider the user's constraints when selecting the statistics and defining the methodology.
-     - Set a minimum minutes played threshold to ensure the players have a significant impact on the game (e.g., 1000 minutes or at least 15 appearences).
   expected_output: >
-    A structured instruction in natural language containing:
-    - A clear list of selected statistics, divided into:
-      - `Primary Statistics`: With their importance level (high/medium/low) and justifications.
-      - `Secondary Statistics`: With their importance level and justifications.
-    - A SQL-compatible methodology, considering the table structure, that includes:
-      - A formula or logic for calculating the composite index using the from the selected statistics.
-      - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
-    - A clear explanation of how to handle age range constraints in the analysis.
-  agent: interpreter_agent
+    1. Structured list of selected statistics and orientation of which positions to focus on.
+       - Primary: With importance levels and justifications
+       - Secondary: With importance levels and justifications
 
+    2. Analysis methodology:
+       - Formula for composite index
+       Propose a composite index using SQL-compatible logic. For example:
+        - For forwards: `(0.5 × goals + 0.3 × assists + 0.2 × successful_dribbles_percentage)`
+        - For defenders: `(0.4 × tackles + 0.3 × interceptions + 0.3 × ground_duels_won_percentage)`
+        Adjust the weights dynamically based on positional requirements or user-defined constraints.
+       - Market value adjustments
+       - Fallback strategies
+
+    3. Filtering criteria:
+       - Market value ranges
+       - Minimum participation thresholds
+       - Additional instructions for querying positional data using substring matching (e.g., `LIKE '%CB%'`).
+  agent: interpreter_agent
 
 data_analysis:
   description: >
-    Perform a database analysis to identify the 30 most suitable players based on the selected statistics.
+    Perform data analysis on the database to identify the 30 most suitable players,
+    considering the complete structure of the players and statistics tables.
+
+    # Analysis Steps
+    1. JOIN tables:
+       - Combine data from players and statistics
+       - Verify information consistency
     
-    Upon receiving the statistics along with their assigned importance levels—categorized 
-    as either primary or secondary and ranked as high, medium, or low—create a composite 
-    index that provides an integrated evaluation of all these statistics, 
-    assigning appropriate weights to each based on their significance, rather than evaluating them individually..
+    2. Apply primary filters:
+       - Minimum participation thresholds
+       - Exclude specific teams:
+          -Botafogo
+          -Flamengo
+          -Palmeiras
+          -São Paulo
+          -Santos
+          -Corinthians
+          -Internacional
+          -Grêmio
+          -Atlético Mineiro
+          -Cruzeiro
+          -Bahia
+          -Fortaleza
+          -Boca Juniors
+          -River Plate
+         - Position matches the provided instruction
+            The positions in the table are stored in the following format:
+
+            DR - DL
+
+            Therefore, if you need to search for "DR" or any other position, you should not look for an exact match but instead
+            search for values that contain the substring "DR" within them. Use a query that employs partial matching 
+            (e.g., LIKE operator) to ensure the desired results are returned.
+         - When setting the query, be sure to set the weights for calculate the composite index
+         - Other filters provided by the user
     
+    3. Normalize data:
+       - Calculate composite indices
+    
+    4. Cost-benefit analysis:
+       - Performance-to-value ratio
+       
+    
+    5. Final ranking:
+       - Sort by composite index
+       - Apply secondary filters
+       - Select top 30
 
-    You must keep the limit of 30 players and provide a clear explanation of the selection process.
-    Try to select many players as possible, but always keep the limit of 30 players.
-
-    Don't search players from the following teams:
-    -Botafogo
-    -Flamengo
-    -Palmeiras
-    -São Paulo
-    -Santos
-    -Corinthians
-    -Internacional
-    -Grêmio
-    -Atlético Mineiro
-    -Cruzeiro
-    -Bahia
-    -Fortaleza
-    -Boca Juniors
-    -River Plate
-
-
-    If applicable, provide clear fallback strategies for situations where the initial thresholds return fewer than 5 players.
-    Ensure that:
-     - You use the position abbreviations as listed in the statistics document (e.g., "D"(defensive) for center-back, "F" (Forward) for wingers).
-     - Remember to consider the table structure when defining the methodology and the SQL operations.
-     - DON'T use statistics that are not available in the database.
-     - If the user sets a age range, you should consider this in your analysis.
-     - If the user sets a position, you should consider this in your analysis.
-     - Consider the user's constraints when selecting the statistics and defining the methodology.
-     - Set a minimum minutes played threshold to ensure the players have a significant impact on the game (e.g., 1000 minutes or at least 15 appearences).
+    Ensure to report at least 5 players per position, if possible. Trying to report the maximum number of players possible,
+    limited to 30.
 
   expected_output: >
-    A JSON object containing:
-    - `analyzed_players` (integer): Total number of players analyzed.
-    - `selected_players` (array of objects): Each object includes:
-      - `player_id` (string): Identifier.
-      - `name` (string): Player's name.
-      - `current_team` (string): Current team.
-      - `age` (integer): Player's age.
-      - `key_statistics` (object): Each statistic name maps to:
-        - `value` (float): Statistic value (absolute).
-      - `selection_justification` (string): Reason for selection.
-    - `analysis_methodology` (string): Explanation of the selection process.
-    - Any fallback mechanisms for handling cases with fewer than 5 qualifying players.
+    JSON containing:
+    - total_analyzed: Total number of players analyzed
+    - selected_players: Array with 30 objects containing:
+      - Basic details (id, name, team, league)
+      - Market value and dominant foot
+      - Statistical data found and used
+      - Calculated composite indices
+      - Justification for selection
+    - detailed_methodology: Process explanation
+    - at least 5 players 
+    - applied_fallbacks: If applicable
   agent: analyst_agent
 
 report_generation:
   description: >
-    Create a detailed report based on the selected players.
-    The report should include individual analysis of each player and
-    justifications for their selection. Include comparative analysis
-    between players and clear recommendations.
-    Don't create players, use only the ones that are available in the database.
-  expected_output: >
-    A structured report containing:
-            1. Executive Summary
-            2. Analysis Methodology
-            3. Player Profiles (for each player):
-               - Player Name, Age, and Current Team
-               - Statistical Analysis
-               - Tactical Fit Assessment
-               - Strengths and Areas for Development
-            4. Comparative Analysis with a table with the results of the selected players with the following columns:
+    Generate a detailed report based on the selected players.
 
-            player name, player team, all columns with the statiscs used in the analysis, and a column with the suitability for the tactical role.
-           
-            5. Recommendations
-            6. Technical Appendix with detailed statistics
+    # Report Structure
+    1. Executive Summary
+       - Overview of the process
+       - Key findings
+
+    2. Methodology
+       - Selection criteria
+       - Composite indices
+       - Cost-benefit analysis
+
+    3. Individual Analysis
+       - Complete player data
+       - Staticial results found
+       - Cost-benefit ratio
+
+    4. Comparative Analysis
+       - Full statistics table
+       - Rankings by different metrics
+       - Value comparison
+
+    5. Recommendations
+       - Top candidates
+       - Detailed justifications
+       - Adaptation considerations
+
+    
+
+  expected_output: >
+    Structured report including:
+    1. All mentioned sections
+    2. Complete comparative tables
+    3. Detailed individual analyses
+    4. Reliability metrics
+    5. League context
+    6. Cost-benefit analysis
+
+    Report at least 5 players.
+    
   agent: report_agent
 
 markdown_generation:
   description: >
-    Format the technical report in markdown, creating a clear,
-    professional, and well-organized structure. Include proper headers,
-    tables, and formatting for optimal readability. Ensure all technical
-    content is properly formatted and easily navigable. You must translate
-    the report to Brazilian Portuguese.
+    Format the technical report in markdown, translating it into Portuguese
+    while preserving all data and analyses.
+
+    # Mandatory Elements
+    1. Clear structure with title hierarchy
+    2. Formatted tables including:
+       - Market values
+       - Composite indices
+    3. Proper highlights for:
+       - Critical points
+       - Top candidates
+       - Important warnings
+    4. Preservation of numerical data
+    5. Consistent translation of technical terms
+
   expected_output: >
-    A markdown file, translated to Portuguese, containing:
-            1. Title and Table of Contents
-            2. All sections from the technical report properly formatted with:
-               - Consistent header hierarchy
-               - Well-formatted tables for statistics
-               - Proper emphasis and highlighting
-               - Clear section breaks
-               - Formatted lists and bullet points
-            3. Save the file as a .md file
+    Markdown file in Portuguese containing:
+    1. Complete report structure
+    2. Proper formatting of all elements
+    3. Preserved and contextualized data
+    4. Consistent technical terminology
   agent: markdown_agent

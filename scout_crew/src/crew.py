@@ -29,7 +29,9 @@ sql_tools = [
 
 
 ## Read files
-file_read_tool = FileReadTool(file_path='data/stats.md')
+stats_read_tool = FileReadTool(file_path='data/stats.md')
+
+template_read_tool = FileReadTool(file_path='data/output_model.md')
 
 ## Write files
 file_write_tool = FileWriterTool(file_path='output/report.md')
@@ -50,7 +52,7 @@ class ScoutCrew():
 	def interpreter_agent(self) -> Agent:
 		return Agent(
 			config=self.agents_config['interpreter_agent'],
-			tools=[file_read_tool],
+			tools=[stats_read_tool],
 			verbose=True
 		)
 

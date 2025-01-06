@@ -6,6 +6,7 @@ import json
 from src.dbmanager import StatisticsDatabaseManager  # Certifique-se de ajustar o caminho corretamente
 
 feito = [
+
     {
         "nome_liga": "Série A do Campeonato Brasileiro",
         "temporada": "2024",
@@ -23,17 +24,16 @@ feito = [
         "temporada": "2024",
         "id_liga": "155",
         "id_temporada": "57478"
-    },
+    }]
+
+
+ligas_futebol = [
     {
         "nome_liga": "Primeira Divisão do Uruguai",
         "temporada": "2024",
         "id_liga": "278",
         "id_temporada": "58264"
-    }
-]
-
-ligas_futebol = [
-
+    },
     {
         "nome_liga": "Primeira Divisão da Colômbia",
         "temporada": "2024",
@@ -81,6 +81,36 @@ ligas_futebol = [
         "temporada": "2024",
         "id_liga": "11653",
         "id_temporada": "57883"
+    },
+    {
+        "nome_liga": "Primeira Divisão de Senegal",
+        "temporada": "2024",
+        "id_liga": "1226",
+        "id_temporada": "56126"
+    },
+    {
+        "nome_liga": "Primeira Divisão de Angola",
+        "temporada": "2024",
+        "id_liga": "2308",
+        "id_temporada": "56180"
+    },
+    {
+        "nome_liga": "Primeira Divisão de Marrocos",
+        "temporada": "2024",
+        "id_liga": "937",
+        "id_temporada": "65433"
+    },
+    {
+        "nome_liga": "Primeira Divisão de Nigéria",
+        "temporada": "2024",
+        "id_liga": "2060",
+        "id_temporada": "55468"
+    },
+    {
+        "nome_liga": "Primeira Divisão da África do Sul",
+        "temporada": "2024",
+        "id_liga": "358",
+        "id_temporada": "53301"
     }
 ]
 
@@ -159,48 +189,68 @@ for liga in ligas_futebol:
         import json
         import pandas as pd
         from bs4 import BeautifulSoup
+        from datetime import datetime
 
 
 
         base_url = 'https://api.sofascore.com/api/v1/player/'  # Base URL da API
+        
+        
 
         request_url = f'{base_url}{player_id}'
+        position_request_url = f"https://www.sofascore.com/api/v1/player/{player_id}/characteristics"
         print(f"Fetching player details for ID: {player_id}")
 
-        # Envia a requisição
-        response = driver.get(request_url)
-        html_content = response.get_content()
+        def fetch_data_from_api(driver, request_url):
+            # Envia a requisição
+            response = driver.get(request_url)
+            html_content = response.get_content()
 
-        # Usa BeautifulSoup para extrair o JSON dentro da tag <pre>
-        soup = BeautifulSoup(html_content, 'html.parser')
-        pre_tag = soup.find('pre')
+            # Usa BeautifulSoup para extrair o JSON dentro da tag <pre>
+            soup = BeautifulSoup(html_content, 'html.parser')
+            pre_tag = soup.find('pre')
+
+            pre_content = pre_tag.text
+            data = json.loads(pre_content)  # Converte o texto para um dicionário Python
+            return data
+
+        # Acessa os detalhes do jogador
+        data_player = fetch_data_from_api(driver, request_url)
+        player_info = data_player.get('player', {})
+        data_position = fetch_data_from_api(driver, position_request_url)
+        positions_str = " - ".join(data_position["positions"])
+        if player_info and positions_str:  # Verifica se há dados para o jogador
+            
+
+            # Timestamp fornecido
+            dateOfBirthTimestamp = player_info.get("dateOfBirthTimestamp")
+
+            # Converter o timestamp em uma data
+            date_of_birth = datetime.fromtimestamp(dateOfBirthTimestamp)
+            
+            # Obter a data atual
+            today = datetime.now()
+
+            # Calcular a idade
+            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+
+            print(f"A idade é: {age} anos")
 
 
-        pre_content = pre_tag.text
-        data = json.loads(pre_content)  # Converte o texto para um dicionário Python
-
-            # Acessa os detalhes do jogador
-        player_info = data.get('player', {})
-        if player_info:  # Verifica se há dados para o jogador
-            # Extrai os campos desejados
             extracted_data = {
             "player_id": player_info.get("id"),
             "player_name": player_info.get("name"),
+            "age": age,
             "team_name": player_info.get("team", {}).get("name"),
             "league": player_info.get("team", {}).get("tournament", {}).get("name"),
-            "position": player_info.get("position"),
+            "position": positions_str,
             "preferred_foot": player_info.get("preferredFoot"),
             "market_value": player_info.get("proposedMarketValue"),
         }
             print(extracted_data)  # Adiciona os dados à lista
-       # Converte a lista de dicionários para um DataFrame
-
-        if extracted_data:
-            player_df = pd.json_normalize(extracted_data)  # Normaliza os dados JSON para o formato tabular
-            #player_df = pd.DataFrame(player_df)  # Retorna um DataFrame vazio caso não haja dados
-            #print(player_df.head())
         else:
-            print("No player data found.")
+            print("Dados não encontrados para o jogador.")
+       
 
         df = pd.json_normalize(extracted_data)
         return df.to_dict(orient='records')
