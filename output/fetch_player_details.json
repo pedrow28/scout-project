@@ -1,12 +1,12 @@
 [
     {
-        "player_id": 47444,
-        "player_name": "Mauricio Pereyra",
-        "age": 34,
-        "team_name": "Club Nacional",
-        "league": "Primera Division, Apertura",
-        "position": "AM - MC - DM",
-        "preferred_foot": "Right",
-        "market_value": 370000
+        "player_id": 293341,
+        "player_name": "Rodrigo Contreras",
+        "age": 29,
+        "team_name": "Antofagasta",
+        "league": "Primera Divisi\u00f3n",
+        "position": "ST",
+        "preferred_foot": "Left",
+        "market_value": 1600000
     }
 ]

@@ -24,10 +24,7 @@ feito = [
         "temporada": "2024",
         "id_liga": "155",
         "id_temporada": "57478"
-    }]
-
-
-ligas_futebol = [
+    },
     {
         "nome_liga": "Primeira Divisão do Uruguai",
         "temporada": "2024",
@@ -52,7 +49,7 @@ ligas_futebol = [
         "id_liga": "406",
         "id_temporada": "57741"
     },
-    {
+        {
         "nome_liga": "Primeira Divisão do Paraguai",
         "temporada": "2024",
         "id_liga": "11541",
@@ -75,7 +72,10 @@ ligas_futebol = [
         "temporada": "2024",
         "id_liga": "16736",
         "id_temporada": "58156"
-    },
+    }]
+
+
+ligas_futebol = [
     {
         "nome_liga": "Primeira Divisão do Chile",
         "temporada": "2024",
@@ -225,16 +225,20 @@ for liga in ligas_futebol:
             # Timestamp fornecido
             dateOfBirthTimestamp = player_info.get("dateOfBirthTimestamp")
 
-            # Converter o timestamp em uma data
-            date_of_birth = datetime.fromtimestamp(dateOfBirthTimestamp)
-            
-            # Obter a data atual
-            today = datetime.now()
+            if dateOfBirthTimestamp is not None:
 
-            # Calcular a idade
-            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+                # Converter o timestamp em uma data
+                date_of_birth = datetime.fromtimestamp(dateOfBirthTimestamp)
+                
+                # Obter a data atual
+                today = datetime.now()
 
-            print(f"A idade é: {age} anos")
+                # Calcular a idade
+                age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+
+                print(f"A idade é: {age} anos")
+            else:
+                age = None
 
 
             extracted_data = {
@@ -248,12 +252,13 @@ for liga in ligas_futebol:
             "market_value": player_info.get("proposedMarketValue"),
         }
             print(extracted_data)  # Adiciona os dados à lista
+            df = pd.json_normalize(extracted_data)
+            return df.to_dict(orient='records')
         else:
             print("Dados não encontrados para o jogador.")
        
 
-        df = pd.json_normalize(extracted_data)
-        return df.to_dict(orient='records')
+
 
 
 

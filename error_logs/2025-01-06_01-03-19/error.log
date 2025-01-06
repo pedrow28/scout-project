@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\Acer\Projetos Git\scout-project\venv_scout\Lib\site-packages\botasaurus\browser_decorator.py", line 179, in run_task
+    result = func(driver, data)
+             ^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Acer\Projetos Git\scout-project\db_main.py", line 218, in fetch_player_details
+    data_player = fetch_data_from_api(driver, request_url)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Acer\Projetos Git\scout-project\db_main.py", line 213, in fetch_data_from_api
+    pre_content = pre_tag.text
+                  ^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'text'

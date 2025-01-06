@@ -105,7 +105,7 @@ class ScoutCrew():
 	def markdown_generation(self) -> Task:
 		return Task(
 			config=self.tasks_config['markdown_generation'],
-			output_file='report.md'
+			output_file='output/report.md'
 		)
 
 
