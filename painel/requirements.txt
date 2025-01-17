@@ -1,0 +1,5 @@
+streamlit==1.26.0
+sqlite3  # Não precisa ser listado, é parte do Python
+pandas==2.0.3
+st-aggrid==0.3.2
+plotly==5.17.0
