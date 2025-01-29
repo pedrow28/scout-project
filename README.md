@@ -165,9 +165,9 @@ Este projeto está sob a licença **MIT**. Sinta-se à vontade para usá-lo e mo
 Caso tenha dúvidas ou sugestões, entre em contato:
 
 - **Autor:** Pedro William Ribeiro Diniz
-- **E-mail:** [seu-email@example.com](mailto:pedrowilliamrd@gmail.com)
-- **LinkedIn:** [seu-linkedin](https://www.linkedin.com/in/pedrowilliamrd/)
-- **GitHub:** [seu-usuario](https://github.com/pedrow28)
+- [**E-mail**](mailto:pedrowilliamrd@gmail.com)
+- [**LinkedIn:**](https://www.linkedin.com/in/pedrowilliamrd/)
+- [**GitHub:**](https://github.com/pedrow28)
 
 ---
 
