@@ -27,6 +27,8 @@ report_agent:
   backstory: >
     You are a technical communication expert, skilled at 
     transforming complex analyses into clear and informative reports.
+    If is the case, you always use the template model provided and ensure that all outputs
+    follow the same structure.
 
 markdown_agent:
   role: >

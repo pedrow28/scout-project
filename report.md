@@ -1,80 +1,165 @@
 ```markdown
-# Relatório Técnico: Análise de Jogadores de Futebol
-
-## Sumário
-1. [Resumo Executivo](#resumo-executivo)
-2. [Metodologia de Análise](#metodologia-de-análise)
-3. [Perfis dos Jogadores](#perfis-dos-jogadores)
-   - [Ezequiel Barco](#ezequiel-barco)
-   - [Tomás Cuello](#tomás-cuello)
-4. [Análise Comparativa](#análise-comparativa)
-5. [Recomendações](#recomendações)
-6. [Apêndice Técnico](#apêndice-técnico)
+# Relatório de Análise de Desempenho de Jogadores
 
 ## 1. Resumo Executivo
 
-Este relatório fornece uma análise abrangente de jogadores de futebol selecionados, com foco em suas potenciais contribuições para a dinâmica da equipe. Aproveitando medidas estatísticas e avaliações táticas, os jogadores foram avaliados e identificados por suas habilidades para atender a necessidades estratégicas específicas. A análise destaca especificamente Ezequiel Barco e Tomás Cuello, mostrando suas qualificações com base em um índice composto refinado que prioriza assistências, movimentos progressivos e atividade de scoring.
+**Visão Geral do Processo**  
+A análise envolve a avaliação do desempenho de cinco jogadores selecionados para a posição de lateral-direito em diferentes ligas profissionais, com foco em assistências, capacidade de duelos e disciplina. O objetivo é fornecer uma visão abrangente sobre as habilidades de cada jogador, seu potencial custo-benefício e valor geral para equipes potenciais.
 
-## 2. Metodologia de Análise
+**Principais Conclusões**  
+- Todos os jogadores demonstraram fortes capacidades defensivas, especificamente nos duelos vencidos, com um índice de desempenho composto sólido destacando sua eficácia.
+- Há uma variação no valor de mercado, com alguns jogadores mostrando grande potencial de custo-benefício.
+- A análise estabelece um ranking claro baseado em estatísticas dos jogadores, custos e índices compostos, levando a recomendações bem informadas.
 
-A seleção de jogadores foi realizada usando uma abordagem de índice composto, ponderado da seguinte forma: Assistências (40%), Passes Progressivos (30%), Conduções Progressivas (20%) e Gols + Assistências (10%). Nosso framework de análise priorizou indicadores-chave de desempenho (KPIs) e limiares de percentil, visando determinar o impacto em campo e o valor dos jogadores. Os dados foram analisados para jogadores com menos de 25 anos de equipes não especificadas, combinando os desempenhos da temporada atual com tendências históricas para avaliar trajetórias de carreira e potencial.
+## 2. Metodologia
 
-## 3. Perfis dos Jogadores
+**Critérios de Seleção**  
+Os jogadores foram escolhidos com base em sua posição (lateral-direito), idade (até 25 anos) e desempenho em áreas-chave, como assistências, duelos totais vencidos, duelos terrestres vencidos e registros disciplinares.
 
-### Ezequiel Barco
-- **Idade:** 25  
-- **Equipe Atual:** Spartak Moscou  
-- **Análise Estatística:**  
-  - Assistências por jogo: 0,17 (88º percentil)  
-  - Passes Progressivos: 9,73 por jogo (98º percentil)  
-  - Conduções Progressivas: 7,47 por jogo (99º percentil)  
-  - Gols + Assistências: 0,35 por jogo (92º percentil)  
-- **Avaliação de Ajuste Tático:**  
-  Ezequiel Barco é visto como um construtor de jogo de alto valor, capaz de avançar a jogada através do movimento habilidoso com a bola. Suas forças em facilitação progressiva se alinham bem com táticas que exigem transições ágeis e fortes parcerias laterais.  
-- **Forças e Áreas para Desenvolvimento:**  
-  As forças incluem manuseio ágil da bola e potencial de cruzamento. Para aumentar o impacto, sugere-se maior consistência na participação em gols.
+**Índices Compositos**  
+Os índices compostos foram calculados usando uma fórmula ponderada que enfatiza assistências, duelos totais vencidos, porcentagens de duelos terrestres vencidos e registros disciplinares para medir o desempenho geral do jogador.
 
-### Tomás Cuello
-- **Idade:** 24  
-- **Equipe Atual:** Athletico Paranaense  
-- **Análise Estatística:**  
-  - Assistências por jogo: 0,22 (72º percentil)  
-  - Passes Progressivos: 3,94 por jogo (53º percentil)  
-  - Conduções Progressivas: 4,57 por jogo (90º percentil)  
-  - Gols + Assistências: 0,36 por jogo (40º percentil)  
-- **Avaliação de Ajuste Tático:**  
-  O conjunto de habilidades de Tomás Cuello o posiciona como um colaborador versátil em cenários de transição rápida. Sua proficiência em avançar a posse através de dribles complementa sistemas que favorecem contra-ataques rápidos.  
-- **Forças e Áreas para Desenvolvimento:**  
-  As forças incluem conduções dinâmicas e avanço de jogadas. Ele deve focar em aprimorar a consciência tática em prol da criação de gols para aumentar seus ranks percentuais.
+**Análise de Custo-Benefício**  
+O valor de mercado é comparado com índices compostos, assistências e desempenho em duelos para determinar a relação custo-eficácia. Isso ilustra o valor dos jogadores em relação ao seu preço de mercado.
+
+## 3. Análise Individual
+
+### Joaquín García
+- **Equipe:** Vélez Sarsfield
+- **Liga:** Liga Profissional
+- **Valor de Mercado:** $3.400.000
+- **Estatísticas:**  
+  - **Aparições:** 22
+  - **Assistências:** 0
+  - **Duelos Totais Vencidos:** 128 (62,44%)
+  - **Duelos Terrestres Vencidos:** 107 (66,88%)
+  - **Cartões Amarelos:** 6
+  - **Cartões Vermelhos:** 0
+  - **Precisão de Passes:** 83,16%
+  - **Desarmes:** 77
+  - **Interceptações:** 20
+
+**Resultados Estatísticos Encontrados**  
+Demonstra jogo altamente disciplinado com boa precisão de passes e altas taxas de sucesso em duelos.
+
+**Relação Custo-Benefício**  
+Alto valor de mercado com um índice composto de 32,53, indicando forte custo-benefício considerando as métricas de desempenho.
+
+### Gonzalo Luján
+- **Equipe:** San Lorenzo
+- **Liga:** Liga Profissional
+- **Valor de Mercado:** $2.700.000
+- **Estatísticas:**  
+  - **Aparições:** 19
+  - **Assistências:** 0
+  - **Duelos Totais Vencidos:** 61 (61,62%)
+  - **Duelos Terrestres Vencidos:** 43 (61,43%)
+  - **Cartões Amarelos:** 2
+  - **Cartões Vermelhos:** 1
+  - **Precisão de Passes:** 71,31%
+  - **Desarmes:** 29
+  - **Interceptações:** 7
+
+**Resultados Estatísticos Encontrados**  
+Desempenho sólido em duelos com precisão de passes um pouco inferior, mas mantém boa disciplina.
+
+**Relação Custo-Benefício**  
+Valor de mercado competitivo combinado com um índice composto de 30,96, sugerindo valor proporcional.
+
+### Bautista Barros Schelotto
+- **Equipe:** Gimnasia y Esgrima
+- **Liga:** Liga Profissional
+- **Valor de Mercado:** $270.000
+- **Estatísticas:**  
+  - **Aparições:** 17
+  - **Assistências:** 3
+  - **Duelos Totais Vencidos:** 60 (58,82%)
+  - **Duelos Terrestres Vencidos:** 50 (58,82%)
+  - **Cartões Amarelos:** 5
+  - **Cartões Vermelhos:** 0
+  - **Precisão de Passes:** 61,19%
+  - **Desarmes:** 42
+  - **Interceptações:** 16
+
+**Resultados Estatísticos Encontrados**  
+Desempenho forte em assistências, sucesso razoável em duelos, defesa bem equilibrada.
+
+**Relação Custo-Benefício**  
+Baixo valor de mercado com um índice composto de 30,51, oferecendo alto potencial de custo-benefício.
+
+### Natanael
+- **Equipe:** Coritiba
+- **Liga:** Brasileirão Série B
+- **Valor de Mercado:** $1.600.000
+- **Estatísticas:**  
+  - **Aparições:** 36
+  - **Assistências:** 2
+  - **Duelos Totais Vencidos:** 168 (57,73%)
+  - **Duelos Terrestres Vencidos:** 121 (59,9%)
+  - **Cartões Amarelos:** 5
+  - **Cartões Vermelhos:** 0
+  - **Precisão de Passes:** 77,6%
+  - **Desarmes:** 68
+  - **Interceptações:** 25
+
+**Resultados Estatísticos Encontrados**  
+Alto volume de duelos vencidos, exibindo impacto ofensivo sustentado por assistências.
+
+**Relação Custo-Benefício**  
+Valor de mercado competitivo com um índice composto de 30,21, demonstrando bom valor.
+
+### Juan Cáceres
+- **Equipe:** Racing Club
+- **Liga:** Liga Profissional
+- **Valor de Mercado:** $905.000
+- **Estatísticas:**  
+  - **Aparições:** 18
+  - **Assistências:** 0
+  - **Duelos Totais Vencidos:** 96 (60,0%)
+  - **Duelos Terrestres Vencidos:** 75 (59,06%)
+  - **Cartões Amarelos:** 2
+  - **Cartões Vermelhos:** 0
+  - **Precisão de Passes:** 75,23%
+  - **Desarmes:** 47
+  - **Interceptações:** 13
+
+**Resultados Estatísticos Encontrados**  
+Desempenhador defensivo consistente com estatísticas fortes em duelos e disciplina.
+
+**Relação Custo-Benefício**  
+Valor de mercado razoável com um índice composto de 29,97, alinhando-se bem ao desempenho.
 
 ## 4. Análise Comparativa
 
-| Nome do Jogador  | Assistências | Passes Progressivos | Conduções Progressivas | Percentil | Adequação ao Papel Tático |
-|------------------|--------------|---------------------|------------------------|-----------|---------------------------|
-| Ezequiel Barco   | 0,17         | 9,73                | 7,47                   | 88-99     | Alta                      |
-| Tomás Cuello     | 0,22         | 3,94                | 4,57                   | 40-90     | Moderada                  |
+**Tabela Completa de Estatísticas**  
+| Jogador                   | Equipe              | Valor de Mercado | Aparições | Assistências | Duelos Totais Vencidos (%) | Duelos Terrestres Vencidos (%) | Precisão de Passes (%) | Índices Compositos |
+|---------------------------|---------------------|------------------|-----------|--------------|---------------------------|-------------------------------|------------------------|-------------------|
+| Joaquín García            | Vélez Sarsfield     | $3.400.000       | 22        | 0            | 128 (62,44)               | 107 (66,88)                  | 83,16                  | 32,53             |
+| Gonzalo Luján             | San Lorenzo         | $2.700.000       | 19        | 0            | 61 (61,62)                | 43 (61,43)                   | 71,31                  | 30,96             |
+| Bautista Barros Schelotto | Gimnasia y Esgrima  | $270.000         | 17        | 3            | 60 (58,82)                | 50 (58,82)                   | 61,19                  | 30,51             |
+| Natanael                  | Coritiba            | $1.600.000       | 36        | 2            | 168 (57,73)               | 121 (59,9)                   | 77,6                   | 30,21             |
+| Juan Cáceres              | Racing Club         | $905.000         | 18        | 0            | 96 (60,0)                 | 75 (59,06)                   | 75,23                  | 29,97             |
+
+**Rankings por Diferentes Métricas**  
+- **Duelos Totais Vencidos:** Natanael
+- **Duelos Terrestres Vencidos:** Natanael
+- **Precisão de Passes:** Joaquín García
+- **Índices Compositos:** Joaquín García
+
+**Comparação de Valor**  
+Bautista Barros Schelotto apresenta o melhor equilíbrio custo-benefício devido ao seu baixo valor de mercado e métricas de desempenho razoavelmente altas.
 
 ## 5. Recomendações
 
-Com base na análise, Ezequiel Barco é fortemente recomendado para funções que exigem altos graus de criação de jogadas e atividade de transição, adequadas para sistemas com ênfase em movimentos de ataque amplos. Tomás Cuello, embora menos potente em métricas de impacto estrela, demonstra potencial promissor de desenvolvimento para equipes explorando estratégias de verticalidade e contra-ataque. Recomenda-se monitoramento próximo e treinamento de habilidades direcionado para maximizar sua eficácia.
+**Principais Candidatos**  
+1. **Joaquín García** - Pela eficácia geral em duelos defensivos e precisão de passes.
+2. **Bautista Barros Schelotto** - Pela combinação custo-efetiva de assistências e defesa confiável.
 
-## 6. Apêndice Técnico
+**Justificativas Detalhadas**  
+- O alto índice composto de Joaquín García e sua precisão de passes fazem dele um candidato de destaque para equipes que buscam confiabilidade defensiva com bom custo.
+- O valor de mercado de Bautista Barros Schelotto não pode ser ignorado; seu baixo custo oferece excelente oportunidade para clubes melhorarem sua equipe economicamente, especialmente por sua contribuição em assistências.
 
-Foram fornecidas seguintes análises estatísticas detalhadas:
-
-- **Ezequiel Barco:**  
-  - Percentil de Assistências: 88  
-  - Percentil de Passes Progressivos: 98  
-  - Percentil de Conduções Progressivas: 99  
-  - Percentil de Gols + Assistências: 92  
-
-- **Tomás Cuello:**  
-  - Percentil de Assistências: 72  
-  - Percentil de Passes Progressivos: 53  
-  - Percentil de Conduções Progressivas: 90  
-  - Percentil de Gols + Assistências: 40  
-
-A análise estatística valida a escolha estratégica dos jogadores com base na forma atual deles e nas perspectivas de crescimento em alinhamento com as necessidades do framework tático.
+**Considerações para Adaptação**  
+- As equipes devem considerar sua configuração defensiva para maximizar os ganhos de desempenho de jogadores como Joaquín García e Bautista Barros Schelotto, dadas suas forças individuais.
+- As considerações devem incluir táticas que utilizem eficazmente suas forças em duelos e capacidades defensivas.
 ```
-
-This content should be saved as a `.md` file for proper markdown formatting and viewing.
