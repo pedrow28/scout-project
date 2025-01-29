@@ -82,7 +82,7 @@ pip install -r requirements.txt
 ```
 
 ### **4. Configurar as Chaves de API**
-- O projeto faz scraping da **API do SofaScore**. Configure a chave de API no arquivo `.env`:
+- O projeto faz scraping da **API da OpenAI**. Configure a chave de API no arquivo `.env`:
 ```ini
 OPENAI_API_KEY=your_api_key_here
 ```
