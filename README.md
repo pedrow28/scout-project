@@ -1,8 +1,4 @@
-Aqui está um **README.md** bem estruturado para o seu repositório, cobrindo desde a descrição do projeto até instruções de uso e desenvolvimento. Você pode ajustá-lo conforme necessário. 
 
----
-
-```markdown
 # 🚀 Scout Project – Análise Inteligente de Jogadores de Futebol
 
 ## 📌 Visão Geral
@@ -25,7 +21,7 @@ O objetivo é **auxiliar clubes e analistas** na identificação de talentos e t
 
 ## 📂 Estrutura do Projeto
 
-
+```
 📦 pedrow28-scout-project
 ├── db_main.py                   # Script principal para scraping e armazenamento no banco de dados
 ├── requirements.txt              # Dependências do projeto
@@ -51,7 +47,7 @@ O objetivo é **auxiliar clubes e analistas** na identificação de talentos e t
 │   ├── iterator.py                 # Iteração sobre jogadores coletados
 │   └── scrapper.py                 # Script de scraping para obtenção dos dados
 └── README.md                       # Este arquivo
-
+```
 
 ---
 
